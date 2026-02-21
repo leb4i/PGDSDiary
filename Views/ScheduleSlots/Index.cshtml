@@ -1,0 +1,129 @@
+﻿@model IEnumerable<GradingSystem.Models.ScheduleSlot>
+
+@{
+    ViewData["Title"] = "Разписание";
+
+    var days = new[] { "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък" };
+
+    // Изчисляваме датите на текущата седмица
+    var today = DateTime.Today;
+    int diff = (int)today.DayOfWeek - 1;
+    if (diff < 0) diff = 6;
+    var monday = today.AddDays(-diff);
+
+    var maxPeriod = Model.Any() ? Model.Max(s => s.PeriodNumber) : 8;
+}
+
+<div class="page-header">
+    <div>
+        <h1>Разписание</h1>
+        <p>Седмична програма по класове</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Добави час
+    </a>
+</div>
+
+<!-- Навигация седмица -->
+<div class="week-nav">
+    <button class="btn btn-outline" id="prevWeek">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+    <span class="week-label" id="weekLabel"></span>
+    <button class="btn btn-outline" id="nextWeek">
+        <i class="fas fa-chevron-right"></i>
+    </button>
+    <button class="btn btn-outline" id="todayBtn">
+        <i class="fas fa-calendar-day"></i> Днес
+    </button>
+</div>
+
+<!-- Таблица разписание -->
+<div class="table-wrapper schedule-wrapper">
+    <table class="schedule-table">
+        <thead>
+            <tr>
+                <th class="period-col">#</th>
+                @for (int d = 0; d < 5; d++)
+                {
+                    var date = monday.AddDays(d);
+                    bool isToday = date.Date == today;
+                    <th class="@(isToday ? "today-col" : "")">
+                        <div class="day-name">@days[d]</div>
+                        <div class="day-date" data-offset="@d">@date.ToString("dd.MM.yyyy")</div>
+                    </th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (int period = 1; period <= maxPeriod; period++)
+            {
+                <tr>
+                    <td class="period-num">@period</td>
+                    @foreach (var day in days)
+                    {
+                        var slot = Model.FirstOrDefault(s => s.DayOfWeek == day && s.PeriodNumber == period);
+                        if (slot != null)
+                        {
+                            <td class="slot-cell">
+                                <div class="slot-card">
+                                    <div class="slot-subject">@slot.Subject?.Name</div>
+                                    <div class="slot-time">
+                                        <i class="fas fa-clock"></i>
+                                        @slot.StartTime.ToString("HH:mm") - @slot.EndTime.ToString("HH:mm")
+                                    </div>
+                                    <div class="slot-class">
+                                        <i class="fas fa-chalkboard"></i>
+                                        @slot.Class?.Name
+                                    </div>
+                                </div>
+                            </td>
+                        }
+                        else
+                        {
+                            <td class="slot-empty"></td>
+                        }
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section Scripts {
+    <script>
+        // Навигация по седмици
+        let offset = 0;
+
+        const dayDates = document.querySelectorAll('.day-date');
+        const weekLabel = document.getElementById('weekLabel');
+
+        function updateDates() {
+            const today = new Date();
+            const diff = today.getDay() === 0 ? 6 : today.getDay() - 1;
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - diff + (offset * 7));
+
+            const friday = new Date(monday);
+            friday.setDate(monday.getDate() + 4);
+
+            weekLabel.textContent =
+                monday.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit' }) +
+                ' – ' +
+                friday.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit', year: 'numeric' });
+
+            dayDates.forEach(el => {
+                const d = parseInt(el.dataset.offset);
+                const date = new Date(monday);
+                date.setDate(monday.getDate() + d);
+                el.textContent = date.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            });
+        }
+
+        document.getElementById('prevWeek').onclick  = () => { offset--; updateDates(); };
+        document.getElementById('nextWeek').onclick  = () => { offset++; updateDates(); };
+        document.getElementById('todayBtn').onclick  = () => { offset = 0; updateDates(); };
+
+        updateDates();
+    </script>
+}

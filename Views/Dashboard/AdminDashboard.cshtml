@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Начало — Администратор";
+}
+
+<div class="stat-grid">
+    <div class="stat-card" style="background:#1b3a2d;">
+        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-value">@ViewBag.AverageGrade</div>
+        <div class="stat-label">Среден успех</div>
+    </div>
+    <div class="stat-card" style="background:#2e7d50;">
+        <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="stat-value">@ViewBag.TotalStudents</div>
+        <div class="stat-label">Ученици</div>
+    </div>
+    <div class="stat-card" style="background:#dc3545;">
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
+        <div class="stat-value">@ViewBag.TotalGrades</div>
+        <div class="stat-label">Оценки</div>
+    </div>
+    <div class="stat-card" style="background:#e8a020;">
+        <div class="stat-icon"><i class="fas fa-calendar-xmark"></i></div>
+        <div class="stat-value">@ViewBag.TotalAbsences</div>
+        <div class="stat-label">Отсъствия</div>
+    </div>
+    <div class="stat-card" style="background:#1a7ab5;">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-value">@ViewBag.TotalLate</div>
+        <div class="stat-label">Закъснения</div>
+    </div>
+</div>
+
+<div class="dashboard-grid">
+
+    <!-- Графика -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-trophy" style="color:#e8a020;"></i>
+            Най-висок успех по предмет
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="subjectsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Последни оценки -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-clock" style="color:var(--accent);"></i>
+            Последно въведени оценки
+        </div>
+        <table>
+            <thead>
+                <tr><th>Ученик</th><th>Предмет</th><th>Оценка</th><th>Дата</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var g in ViewBag.RecentGrades)
+                {
+                    <tr>
+                        <td>@g.Student?.FirstName @g.Student?.LastName</td>
+                        <td>@g.Subject?.Name</td>
+                        <td>
+                            @{
+                                string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
+                            }
+                            <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
+                        </td>
+                        <td style="color:var(--text-muted);font-size:13px;">@g.GradedAt.ToString("dd.MM.yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Топ 10 -->
+    <div class="card" style="grid-column: 1 / -1;">
+        <div class="card-title">
+            <i class="fas fa-ranking-star" style="color:#e8a020;"></i>
+            Топ 10 ученика в училище
+        </div>
+        <table>
+            <thead>
+                <tr><th>#</th><th>Ученик</th><th>Клас</th><th>Среден успех</th></tr>
+            </thead>
+            <tbody>
+                @{
+                    int rank = 1;
+                }
+                @foreach (var s in ViewBag.Top10)
+                {
+                    <tr>
+                        <td>
+                            @if (rank == 1)
+                            {
+                                <span class="badge" style="background:#fef3c7;color:#b45309;">🥇 1</span>
+                            }
+                            else if (rank == 2)
+                            {
+
+                                <span class="badge" style="background:#f1f5f9;color:#475569;">🥈 2</span>
+                            }
+                            else if (rank == 3)
+                            {
+
+                                <span class="badge" style="background:#fff7ed;color:#c2410c;">🥉 3</span>
+                            }
+                            else
+                            {
+
+                                <span style="font-weight:700;color:var(--text-muted);">@rank</span>
+                            }
+                        </td>
+                        <td style="font-weight:700;">@s.FirstName @s.LastName</td>
+                        <td><span class="badge badge-green">@s.ClassName</span></td>
+                        <td>
+                            @{
+                                string bc = s.Average >= 5.5 ? "grade-6" : s.Average >= 4.5 ? "grade-5" : s.Average >= 3.5 ? "grade-4" : "grade-3";
+                            }
+                            <span class="grade-badge @bc">@s.Average.ToString("F2")</span>
+                        </td>
+                    </tr>
+                    rank++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (string)x.Subject).ToList()));
+    const values = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (double)x.Average).ToList()));
+
+    new Chart(document.getElementById('subjectsChart'), {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [{ data: values, backgroundColor: ['#1b3a2d','#2e7d50','#4aab74','#6fcf97','#a8dfc0'], borderRadius: 8, borderSkipped: false }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } }, x: { grid: { display: false } } }
+        }
+    });
+</script>
+}

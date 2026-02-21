@@ -1,0 +1,151 @@
+﻿@{
+    ViewData["Title"] = "Начало";
+}
+
+<!-- STAT CARDS -->
+<div class="stat-grid">
+    <div class="stat-card" style="background: #2563eb;">
+        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+        <div class="stat-value">@ViewBag.AverageGrade</div>
+        <div class="stat-label">Среден успех</div>
+    </div>
+    <div class="stat-card" style="background: #0891b2;">
+        <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+        <div class="stat-value">@ViewBag.TotalStudents</div>
+        <div class="stat-label">Ученици</div>
+    </div>
+    <div class="stat-card" style="background: #dc2626;">
+        <div class="stat-icon"><i class="fas fa-star"></i></div>
+        <div class="stat-value">@ViewBag.TotalGrades</div>
+        <div class="stat-label">Оценки</div>
+    </div>
+    <div class="stat-card" style="background: #d97706;">
+        <div class="stat-icon"><i class="fas fa-calendar-xmark"></i></div>
+        <div class="stat-value">@ViewBag.TotalAbsences</div>
+        <div class="stat-label">Отсъствия</div>
+    </div>
+    <div class="stat-card" style="background: #7c3aed;">
+        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+        <div class="stat-value">@ViewBag.TotalLate</div>
+        <div class="stat-label">Закъснения</div>
+    </div>
+</div>
+
+<!-- ДОЛНА СЕКЦИЯ -->
+<div class="dashboard-grid">
+
+    <!-- Топ предмети -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-trophy" style="color: #d97706;"></i>
+            Най-висок успех по предмет
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="subjectsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Последни оценки -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-clock" style="color: var(--accent);"></i>
+            Последно въведени оценки
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Ученик</th>
+                    <th>Предмет</th>
+                    <th>Оценка</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var g in ViewBag.RecentGrades)
+                {
+                    <tr>
+                        <td>@g.Student?.FirstName @g.Student?.LastName</td>
+                        <td>@g.Subject?.Name</td>
+                        <td>
+                            @{
+                                string bc = g.Value >= 6 ? "grade-6" :
+                                g.Value >= 5 ? "grade-5" :
+                                g.Value >= 4 ? "grade-4" :
+                                g.Value >= 3 ? "grade-3" : "grade-2";
+                            }
+                            <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
+                        </td>
+                        <td style="color: var(--text-muted); font-size:13px;">
+                            @g.GradedAt.ToString("dd.MM.yyyy")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Ученици по клас -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chalkboard" style="color: #0891b2;"></i>
+            Ученици по клас
+        </div>
+        @foreach (var c in ViewBag.ByClass)
+        {
+            <div class="class-row">
+                <span class="class-name">@c.Class</span>
+                <div class="class-bar-wrap">
+                    <div class="class-bar" style="width: @(c.Count * 10)%"></div>
+                </div>
+                <span class="class-count">@c.Count</span>
+            </div>
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const labels  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                    ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (string)x.Subject).ToList()
+            ));
+    const values  = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (double)x.Average).ToList()
+        ));
+    const colors  = ['#2563eb', '#0891b2', '#16a34a'];
+
+        new Chart(document.getElementById('subjectsChart'), {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: colors,
+                    borderRadius: 8,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: ctx => ' Успех: ' + ctx.parsed.y.toFixed(2)
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: 2,
+                        max: 6,
+                        ticks: { stepSize: 1 },
+                        grid: { color: '#f1f5f9' }
+                    },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    </script>
+}

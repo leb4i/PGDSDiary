@@ -1,0 +1,78 @@
+﻿@model GradingSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Добави оценка";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Добави оценка</h1>
+        <p>Въведи нова оценка за ученик</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Назад
+    </a>
+</div>
+
+<div class="card" style="max-width: 560px;">
+    <form asp-action="Create">
+        <div class="form-group">
+            <label class="form-label">Ученик</label>
+            <select asp-for="StudentId" class="form-select" asp-items="ViewBag.StudentId">
+                <option value="">-- Избери ученик --</option>
+            </select>
+            <span asp-validation-for="StudentId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Предмет</label>
+            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                <option value="">-- Избери предмет --</option>
+            </select>
+            <span asp-validation-for="SubjectId" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Оценка</label>
+            <select asp-for="Value" class="form-select">
+                <option value="">-- Избери оценка --</option>
+                <option value="2.00">2</option>
+                <option value="3.00">3</option>
+                <option value="3.50">3.50</option>
+                <option value="4.00">4</option>
+                <option value="4.50">4.50</option>
+                <option value="5.00">5</option>
+                <option value="5.50">5.50</option>
+                <option value="6.00">6</option>
+            </select>
+            <span asp-validation-for="Value" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Вид</label>
+            <select asp-for="Type" class="form-select">
+                <option value="">-- Избери вид --</option>
+                <option value="Тест">Тест</option>
+                <option value="Устен">Устен</option>
+                <option value="Контролно">Контролно</option>
+                <option value="Домашна работа">Домашна работа</option>
+            </select>
+            <span asp-validation-for="Type" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Дата</label>
+            <input asp-for="GradedAt" class="form-control" type="datetime-local" />
+            <span asp-validation-for="GradedAt" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Бележка (незадължително)</label>
+            <input asp-for="Comment" class="form-control" placeholder="Въведи бележка..." />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Запази
+        </button>
+    </form>
+</div>

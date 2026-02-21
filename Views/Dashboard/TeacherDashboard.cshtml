@@ -1,0 +1,113 @@
+﻿@{
+    ViewData["Title"] = "Начало — Учител";
+}
+
+@if (ViewBag.Error != null)
+{
+    <div style="color:red;">@ViewBag.Error</div>
+}
+else
+{
+    var teacher = ViewBag.Teacher;
+
+    <div class="page-header">
+        <div>
+            <h1>Добре дошли, @teacher.FirstName @teacher.LastName!</h1>
+            <p>Вашето табло с информация за часовете и учениците</p>
+        </div>
+    </div>
+
+    <div class="stat-grid" style="grid-template-columns: repeat(2, 1fr); max-width: 500px;">
+        <div class="stat-card" style="background:#1b3a2d;">
+            <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+            <div class="stat-value">@ViewBag.TotalStudents</div>
+            <div class="stat-label">Ученици</div>
+        </div>
+        <div class="stat-card" style="background:#2e7d50;">
+            <div class="stat-icon"><i class="fas fa-star"></i></div>
+            <div class="stat-value">@ViewBag.TotalGrades</div>
+            <div class="stat-label">Поставени оценки</div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid">
+
+        <!-- Моите класове и предмети -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-chalkboard" style="color:var(--accent);"></i>
+                Моите класове и предмети
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Клас</th><th>Предмет</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var cs in ViewBag.MyClassSubjects)
+                    {
+                        <tr>
+                            <td><span class="badge badge-green">@cs.Class?.Name</span></td>
+                            <td style="font-weight:600;">@cs.Subject?.Name</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Последни оценки -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-star" style="color:var(--accent);"></i>
+                Последно поставени оценки
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Ученик</th><th>Клас</th><th>Предмет</th><th>Оценка</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var g in ViewBag.RecentGrades)
+                    {
+                        <tr>
+                            <td style="font-weight:600;">@g.Student?.FirstName @g.Student?.LastName</td>
+                            <td><span class="badge badge-green">@g.Student?.Class?.Name</span></td>
+                            <td>@g.Subject?.Name</td>
+                            <td>
+                                @{
+                                    string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
+                                }
+                                <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Разписание -->
+        <div class="card" style="grid-column: 1 / -1;">
+            <div class="card-title">
+                <i class="fas fa-clock" style="color:var(--accent);"></i>
+                Моето разписание
+            </div>
+            <table>
+                <thead>
+                    <tr><th>Ден</th><th>Час</th><th>Предмет</th><th>Клас</th><th>Начало</th><th>Край</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var slot in ViewBag.Schedule)
+                    {
+                        <tr>
+                            <td style="font-weight:700;">@slot.DayOfWeek</td>
+                            <td style="color:var(--text-muted);">@slot.PeriodNumber</td>
+                            <td style="font-weight:600;">@slot.Subject?.Name</td>
+                            <td><span class="badge badge-green">@slot.Class?.Name</span></td>
+                            <td>@slot.StartTime.ToString("HH:mm")</td>
+                            <td>@slot.EndTime.ToString("HH:mm")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+}

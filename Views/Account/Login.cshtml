@@ -1,0 +1,279 @@
+﻿@{
+    ViewData["Title"] = "Вход";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Вход — PGDSDiary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: #f4f8f5;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* Лява зелена страна */
+        .login-left {
+            width: 420px;
+            background: #1b3a2d;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 40px;
+            min-height: 100vh;
+        }
+
+            .login-left img {
+                width: 120px;
+                height: auto;
+                object-fit: contain;
+                margin-bottom: 28px;
+            }
+
+            .login-left h1 {
+                font-size: 26px;
+                font-weight: 900;
+                color: #ffffff;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                text-align: center;
+                line-height: 1.2;
+            }
+
+            .login-left p {
+                font-size: 13px;
+                font-weight: 600;
+                color: rgba(255,255,255,0.35);
+                letter-spacing: 1.2px;
+                text-transform: uppercase;
+                margin-top: 8px;
+                text-align: center;
+            }
+
+        .login-divider {
+            width: 40px;
+            height: 3px;
+            background: #2e7d50;
+            border-radius: 99px;
+            margin: 24px auto 0;
+        }
+
+        /* Дясна бяла страна */
+        .login-right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .login-box {
+            background: white;
+            border: 1px solid #ddeae3;
+            border-radius: 16px;
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+        }
+
+            .login-box h2 {
+                font-size: 20px;
+                font-weight: 800;
+                color: #1a2e23;
+                margin-bottom: 6px;
+            }
+
+            .login-box .subtitle {
+                font-size: 13px;
+                color: #5a7a68;
+                font-weight: 500;
+                margin-bottom: 28px;
+            }
+
+        .form-label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 800;
+            color: #1a2e23;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .input-wrap {
+            position: relative;
+            margin-bottom: 16px;
+        }
+
+            .input-wrap i {
+                position: absolute;
+                left: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #5a7a68;
+                font-size: 14px;
+            }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px 10px 36px;
+            border: 1.5px solid #ddeae3;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Nunito', sans-serif;
+            color: #1a2e23;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+            .form-control:focus {
+                border-color: #2e7d50;
+            }
+
+        .btn-login {
+            width: 100%;
+            padding: 11px;
+            background: #2e7d50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            cursor: pointer;
+            transition: background 0.15s;
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+            .btn-login:hover {
+                background: #245f3e;
+            }
+
+        .error-msg {
+            background: #fee2e2;
+            color: #b91c1c;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .demo-accounts {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #ddeae3;
+        }
+
+        .demo-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: #5a7a68;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 10px;
+        }
+
+        .demo-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a7a68;
+            padding: 4px 0;
+        }
+
+            .demo-row span:last-child {
+                font-weight: 700;
+                color: #1a2e23;
+                font-family: monospace;
+            }
+    </style>
+</head>
+<body>
+
+    <!-- ЛЯВА СТРАНА -->
+    <div class="login-left">
+        <img src="~/images/logo.png" alt="Logo" />
+        <h1>PGDSDiary</h1>
+        <p>Електронен дневник</p>
+        <div class="login-divider"></div>
+    </div>
+
+    <!-- ДЯСНА СТРАНА -->
+    <div class="login-right">
+        <div class="login-box">
+            <h2>Добре дошли!</h2>
+            <p class="subtitle">Влезте с вашите данни за достъп</p>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="error-msg">
+                    <i class="fas fa-circle-exclamation"></i>
+                    @ViewBag.Error
+                </div>
+            }
+
+            <form method="post" action="/Account/Login">
+                <label class="form-label">Потребителско име</label>
+                <div class="input-wrap">
+                    <i class="fas fa-user"></i>
+                    <input type="text" name="username" class="form-control"
+                           placeholder="Въведи потребителско име" />
+                </div>
+
+                <label class="form-label">Парола</label>
+                <div class="input-wrap">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" name="password" class="form-control"
+                           placeholder="Въведи парола" />
+                </div>
+
+                <button type="submit" class="btn-login">
+                    <i class="fas fa-right-to-bracket"></i> Вход в системата
+                </button>
+            </form>
+
+            <!-- Demo акаунти за конкурса -->
+            <div class="demo-accounts">
+                <div class="demo-title">Demo акаунти</div>
+                <div class="demo-row">
+                    <span>Администратор</span>
+                    <span>admin / 1234</span>
+                </div>
+                <div class="demo-row">
+                    <span>Учител</span>
+                    <span>teacher1 / 1234</span>
+                </div>
+                <div class="demo-row">
+                    <span>Ученик</span>
+                    <span>student1 / 1234</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+﻿<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — PGDSDiary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <img src="~/images/logo.png" alt="Logo" />
+            <div class="logo-text">
+                <span class="logo-top">PGDSDiary</span>
+                <span class="logo-sub">Електронен дневник</span>
+            </div>
+        </div>
+
+        <nav>
+            <div class="sidebar-section">Начало</div>
+            <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Dashboard" ? "active" : "")"
+               href="/Dashboard">
+                <i class="fas fa-house"></i> Начало
+            </a>
+
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="sidebar-section">Училище</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Students" ? "active" : "")" href="/Students">
+                    <i class="fas fa-user-graduate"></i> Ученици
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Classes" ? "active" : "")" href="/Classes">
+                    <i class="fas fa-chalkboard"></i> Класове
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Subjects" ? "active" : "")" href="/Subjects">
+                    <i class="fas fa-book"></i> Предмети
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Teachers" ? "active" : "")" href="/Teachers">
+                    <i class="fas fa-person-chalkboard"></i> Учители
+                </a>
+                <div class="sidebar-section">Успех</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grades" ? "active" : "")" href="/Grades">
+                    <i class="fas fa-star"></i> Оценки
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendances" ? "active" : "")" href="/Attendances">
+                    <i class="fas fa-calendar-check"></i> Отсъствия
+                </a>
+                <div class="sidebar-section">Организация</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
+                    <i class="fas fa-clock"></i> Разписание
+                </a>
+            }
+            else if (User.IsInRole("Teacher"))
+            {
+                <div class="sidebar-section">Работа</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grades" ? "active" : "")" href="/Grades">
+                    <i class="fas fa-star"></i> Оценки
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Attendances" ? "active" : "")" href="/Attendances">
+                    <i class="fas fa-calendar-check"></i> Отсъствия
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
+                    <i class="fas fa-clock"></i> Разписание
+                </a>
+            }
+            else if (User.IsInRole("Student"))
+            {
+                <div class="sidebar-section">Моето</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
+                    <i class="fas fa-clock"></i> Разписание
+                </a>
+            }
+        </nav>
+
+        <div class="sidebar-footer">
+            PGDSDiary © @DateTime.Now.Year
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main-wrapper">
+        <header class="topbar">
+            <div></div>
+            <div class="topbar-right">
+                <div class="topbar-user">
+                    <div class="topbar-avatar">
+                        @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?")
+                    </div>
+                </div>
+
+                <form method="post" action="/Account/Logout">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-logout">
+                        <i class="fas fa-right-from-bracket"></i> Изход
+                    </button>
+                </form>
+            </div>
+        </header>
+
+        <main class="page-content">
+            @RenderBody()
+        </main>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

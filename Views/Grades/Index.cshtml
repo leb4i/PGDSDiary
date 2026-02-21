@@ -1,0 +1,60 @@
+﻿@model IEnumerable<GradingSystem.Models.Grade>
+
+@{
+    ViewData["Title"] = "Оценки";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Оценки</h1>
+        <p>Всички въведени оценки в системата</p>
+    </div>
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fas fa-plus"></i> Добави оценка
+    </a>
+</div>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Ученик</th>
+                <th>Предмет</th>
+                <th>Оценка</th>
+                <th>Вид</th>
+                <th>Дата</th>
+                <th>Бележка</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Student?.FirstName @item.Student?.LastName</td>
+                    <td>@item.Subject?.Name</td>
+                    <td>
+                        @{
+                            string badgeClass = item.Value switch
+                            {
+                                >= 6.00m => "grade-badge grade-6",
+                                >= 5.00m => "grade-badge grade-5",
+                                >= 4.00m => "grade-badge grade-4",
+                                >= 3.00m => "grade-badge grade-3",
+                                _ => "grade-badge grade-2"
+                            };
+                        }
+                        <span class="@badgeClass">@item.Value.ToString("F2")</span>
+                    </td>
+                    <td><span class="badge badge-blue">@item.Type</span></td>
+                    <td>@item.GradedAt.ToString("dd.MM.yyyy")</td>
+                    <td>@item.Comment</td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline btn-sm"><i class="fas fa-pen"></i></a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger  btn-sm"><i class="fas fa-trash"></i></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

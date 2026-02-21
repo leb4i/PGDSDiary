@@ -1,0 +1,72 @@
+﻿@model GradingSystem.Models.Grade
+
+@{
+    ViewData["Title"] = "Редактирай оценка";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Редактирай оценка</h1>
+    </div>
+    <a asp-action="Index" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Назад
+    </a>
+</div>
+
+<div class="card" style="max-width: 560px;">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="form-group">
+            <label class="form-label">Ученик</label>
+            <select asp-for="StudentId" class="form-select" asp-items="ViewBag.StudentId">
+                <option value="">-- Избери ученик --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Предмет</label>
+            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                <option value="">-- Избери предмет --</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Оценка</label>
+            <select asp-for="Value" class="form-select">
+                <option value="2.00">2</option>
+                <option value="3.00">3</option>
+                <option value="3.50">3.50</option>
+                <option value="4.00">4</option>
+                <option value="4.50">4.50</option>
+                <option value="5.00">5</option>
+                <option value="5.50">5.50</option>
+                <option value="6.00">6</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Вид</label>
+            <select asp-for="Type" class="form-select">
+                <option value="Тест">Тест</option>
+                <option value="Устен">Устен</option>
+                <option value="Контролно">Контролно</option>
+                <option value="Домашна работа">Домашна работа</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Дата</label>
+            <input asp-for="GradedAt" class="form-control" type="datetime-local" />
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Бележка</label>
+            <input asp-for="Comment" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Запази
+        </button>
+    </form>
+</div>
