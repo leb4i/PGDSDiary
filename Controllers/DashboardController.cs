@@ -211,16 +211,18 @@ namespace GradingSystem.Controllers
             ViewBag.Top10 = top10;
 
             // Оценки по дата за Line Graph
-            var gradesByDate = myGrades
-                .GroupBy(g => g.GradedAt.ToString("dd.MM"))
+            var gradesByMonth = myGrades
+                .GroupBy(g => new { g.GradedAt.Year, g.GradedAt.Month })
+                .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
                 .Select(g => new
                 {
-                    Date = g.Key,
+                    Date = new DateTime(g.Key.Year, g.Key.Month, 1).ToString("MM.yyyy"),
                     Average = Math.Round(g.Average(x => (double)x.Value), 2)
                 })
                 .ToList();
-            ViewBag.GradeLabels = gradesByDate.Select(x => x.Date).ToList();
-            ViewBag.GradeValues = gradesByDate.Select(x => x.Average).ToList();
+
+            ViewBag.GradeLabels = gradesByMonth.Select(x => x.Date).ToList();
+            ViewBag.GradeValues = gradesByMonth.Select(x => x.Average).ToList();
 
             // Отсъствия
             ViewBag.TotalAbsences = await _context.Attendances

@@ -1,4 +1,4 @@
-﻿*, *::before, *::after {
+﻿﻿*, *::before, *::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
@@ -480,41 +480,66 @@ tbody tr:hover {
     font-size: 12px;
 }
 
-/* ── DASHBOARD ── */
+/* ── STAT КАРТИ ── */
 .stat-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
-    margin-bottom: 22px;
+    gap: 14px;
+    margin-bottom: 20px;
 }
 
-.stat-card {
-    border-radius: 12px;
-    padding: 20px;
-    color: white;
-    position: relative;
-    overflow: hidden;
+.stat-card-new {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: all 0.15s;
 }
 
-.stat-icon {
-    font-size: 30px;
-    opacity: 0.18;
-    position: absolute;
-    right: 14px;
-    top: 14px;
+.stat-card-new:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(46,107,230,0.08);
+    transform: translateY(-1px);
 }
 
-.stat-value {
-    font-size: 30px;
+.stat-card-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.stat-card-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.stat-card-value {
+    font-size: 24px;
     font-weight: 800;
+    color: var(--text-main);
     line-height: 1;
-    margin-bottom: 6px;
+    margin-bottom: 3px;
 }
 
-.stat-label {
-    font-size: 12.5px;
+.stat-card-label {
+    font-size: 13px;
     font-weight: 700;
-    opacity: 0.88;
+    color: var(--text-main);
+}
+
+.stat-card-sub {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-top: 2px;
 }
 
 .dashboard-grid {
@@ -663,4 +688,75 @@ tbody tr:hover {
     align-items: center;
     gap: 4px;
     margin-top: 2px;
+}
+
+/* ── ТОП 10 GRID ── */
+.top10-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.top10-card {
+    background: #f7f8fa;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+    transition: all 0.15s;
+}
+
+    .top10-card:hover {
+        border-color: var(--accent);
+        background: var(--white);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(46,107,230,0.1);
+    }
+
+.top10-rank {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.medal-gold {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.medal-silver {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.medal-bronze {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.medal-default {
+    background: #f1f5f9;
+    color: var(--text-muted);
+}
+
+.top10-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.2;
+}
+
+.top10-class {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
 }

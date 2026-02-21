@@ -1,5 +1,5 @@
 ﻿@{
-    ViewData["Title"] = "Начало — Ученик";
+    ViewData["Title"] = "Начало";
 }
 
 @if (ViewBag.Error != null)
@@ -17,28 +17,47 @@ else
         </div>
     </div>
 
-    <!-- Stat карти -->
-    <div class="stat-grid" style="grid-template-columns: repeat(3, 1fr); max-width: 700px;">
-        <div class="stat-card" style="background:#1b3a2d;">
-            <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
-            <div class="stat-value">@ViewBag.MyAverage</div>
-            <div class="stat-label">Среден успех</div>
+    <!-- STAT КАРТИ -->
+    <div class="stat-grid">
+
+        <div class="stat-card-new">
+            <div class="stat-card-icon" style="background:#eef3fd;color:#2e6be6;">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-card-value">@ViewBag.MyAverage</div>
+                <div class="stat-card-label">Среден успех</div>
+                <div class="stat-card-sub">твоят успех</div>
+            </div>
         </div>
-        <div class="stat-card" style="background:#2e7d50;">
-            <div class="stat-icon"><i class="fas fa-ranking-star"></i></div>
-            <div class="stat-value">@ViewBag.ClassPosition / @ViewBag.ClassTotal</div>
-            <div class="stat-label">Позиция в клас</div>
+
+        <div class="stat-card-new">
+            <div class="stat-card-icon" style="background:#e8f5ee;color:#2e7d50;">
+                <i class="fas fa-ranking-star"></i>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-card-value">@ViewBag.ClassPosition / @ViewBag.ClassTotal</div>
+                <div class="stat-card-label">Позиция в клас</div>
+                <div class="stat-card-sub">клас @student.Class?.Name</div>
+            </div>
         </div>
-        <div class="stat-card" style="background:#dc3545;">
-            <div class="stat-icon"><i class="fas fa-calendar-xmark"></i></div>
-            <div class="stat-value">@ViewBag.TotalAbsences</div>
-            <div class="stat-label">Отсъствия</div>
+
+        <div class="stat-card-new">
+            <div class="stat-card-icon" style="background:#fee2e2;color:#e53e3e;">
+                <i class="fas fa-calendar-xmark"></i>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-card-value">@ViewBag.TotalAbsences</div>
+                <div class="stat-card-label">Отсъствия</div>
+                <div class="stat-card-sub">неизвинени</div>
+            </div>
         </div>
+
     </div>
 
-    <div class="dashboard-grid">
+    <!-- ГРАФИКА + ТОП 10 -->
+    <div class="dashboard-grid" style="margin-bottom:20px;">
 
-        <!-- Line Graph -->
         <div class="card">
             <div class="card-title">
                 <i class="fas fa-chart-line" style="color:var(--accent);"></i>
@@ -49,15 +68,19 @@ else
             </div>
         </div>
 
-        <!-- Топ 10 -->
         <div class="card">
             <div class="card-title">
-                <i class="fas fa-ranking-star" style="color:#e8a020;"></i>
+                <i class="fas fa-ranking-star" style="color:#d97706;"></i>
                 Топ 10 в училище
             </div>
             <table>
                 <thead>
-                    <tr><th>#</th><th>Ученик</th><th>Клас</th><th>Успех</th></tr>
+                    <tr>
+                        <th>#</th>
+                        <th>Ученик</th>
+                        <th>Клас</th>
+                        <th>Успех</th>
+                    </tr>
                 </thead>
                 <tbody>
                     @{
@@ -67,12 +90,16 @@ else
                     {
                         bool isMe = s.StudentId == student.Id;
                         <tr style="@(isMe ? "background:#e8f5ee;font-weight:800;" : "")">
-                            <td style="font-weight:700;">@rank</td>
-                            <td>@s.FirstName @s.LastName @(isMe ? "⭐" : "")</td>
-                            <td><span class="badge badge-green">@s.ClassName</span></td>
+                            <td style="font-weight:700;color:var(--text-muted);">@rank</td>
+                            <td style="font-weight:@(isMe ? "800" : "600");">
+                                @s.FirstName @s.LastName @(isMe ? "⭐" : "")
+                            </td>
+                            <td><span class="badge badge-blue">@s.ClassName</span></td>
                             <td>
                                 @{
-                                    string bc = s.Average >= 5.5 ? "grade-6" : s.Average >= 4.5 ? "grade-5" : s.Average >= 3.5 ? "grade-4" : "grade-3";
+                                    string bc = s.Average >= 5.5 ? "grade-6" :
+                                    s.Average >= 4.5 ? "grade-5" :
+                                    s.Average >= 3.5 ? "grade-4" : "grade-3";
                                 }
                                 <span class="grade-badge @bc">@s.Average.ToString("F2")</span>
                             </td>
@@ -83,35 +110,45 @@ else
             </table>
         </div>
 
-        <!-- Моите оценки -->
-        <div class="card" style="grid-column: 1 / -1;">
-            <div class="card-title">
-                <i class="fas fa-star" style="color:var(--accent);"></i>
-                Моите оценки
-            </div>
-            <table>
-                <thead>
-                    <tr><th>Предмет</th><th>Оценка</th><th>Вид</th><th>Дата</th></tr>
-                </thead>
-                <tbody>
-                    @foreach (var g in ViewBag.MyGrades)
-                    {
-                        <tr>
-                            <td style="font-weight:600;">@g.Subject?.Name</td>
-                            <td>
-                                @{
-                                    string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
-                                }
-                                <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
-                            </td>
-                            <td><span class="badge badge-blue">@g.Type</span></td>
-                            <td style="color:var(--text-muted);font-size:13px;">@g.GradedAt.ToString("dd.MM.yyyy")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+    </div>
 
+    <!-- МОИТЕ ОЦЕНКИ -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-star" style="color:#d97706;"></i>
+            Моите оценки
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Оценка</th>
+                    <th>Вид</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var g in ViewBag.MyGrades)
+                {
+                    <tr>
+                        <td style="font-weight:600;">@g.Subject?.Name</td>
+                        <td>
+                            @{
+                                string bc = g.Value >= 6 ? "grade-6" :
+                                g.Value >= 5 ? "grade-5" :
+                                g.Value >= 4 ? "grade-4" :
+                                g.Value >= 3 ? "grade-3" : "grade-2";
+                            }
+                            <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
+                        </td>
+                        <td><span class="badge badge-gray">@g.Type</span></td>
+                        <td style="color:var(--text-muted);font-size:12px;">
+                            @g.GradedAt.ToString("dd.MM.yyyy")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 }
 
@@ -129,19 +166,24 @@ else
                     label: 'Среден успех',
                     data: values,
                     borderColor: '#2e7d50',
-                    backgroundColor: 'rgba(46,125,80,0.08)',
+                    backgroundColor: 'rgba(46,125,80,0.06)',
                     borderWidth: 2.5,
                     pointBackgroundColor: '#2e7d50',
-                    pointRadius: 5,
-                    tension: 0.3,
+                    pointRadius: 4,
+                    tension: 0.4,
                     fill: true
                 }]
             },
             options: {
-                responsive: true, maintainAspectRatio: false,
+                responsive: true,
+                maintainAspectRatio: false,
                 plugins: { legend: { display: false } },
                 scales: {
-                    y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                    y: {
+                        min: 2, max: 6,
+                        ticks: { stepSize: 1 },
+                        grid: { color: '#f1f5f9' }
+                    },
                     x: { grid: { display: false } }
                 }
             }

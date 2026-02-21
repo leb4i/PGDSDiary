@@ -260,3 +260,4 @@ C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.AspNetCore.
 C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.Extensions.FileProviders.Embedded.dll
 C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
 C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\GradingSystem.sourcelink.json
