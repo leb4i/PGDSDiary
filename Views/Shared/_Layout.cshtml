@@ -71,6 +71,9 @@
             else if (User.IsInRole("Student"))
             {
                 <div class="sidebar-section">Моето</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Grades" ? "active" : "")" href="/Grades">
+                    <i class="fas fa-star"></i> Оценки
+                </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
                     <i class="fas fa-clock"></i> Разписание
                 </a>

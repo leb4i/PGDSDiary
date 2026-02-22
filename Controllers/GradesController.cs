@@ -25,28 +25,62 @@ namespace GradingSystem.Controllers
         // GET: Grades
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Student"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var grades = await _context.Grades
+                    .Include(g => g.Student)
+                    .Include(g => g.Subject)
+                    .Where(g => g.StudentId == user!.StudentId)
+                    .OrderByDescending(g => g.GradedAt)
+                    .ToListAsync();
+                return View(grades);
+            }
+
             if (User.IsInRole("Teacher"))
             {
                 var user = await _userManager.GetUserAsync(User);
                 var teacher = await _context.Teachers
                     .FirstOrDefaultAsync(t => t.UserId == user!.Id);
 
-                if (teacher == null)
-                    return View(new List<Grade>());
+                if (teacher == null) return View(new List<Grade>());
 
-                // Само предметите на учителя
                 var mySubjectIds = await _context.ClassSubjects
                     .Where(cs => cs.TeacherId == teacher.Id)
                     .Select(cs => cs.SubjectId)
                     .Distinct()
                     .ToListAsync();
 
-                var grades = await _context.Grades
+                // Ако е избран клас — филтрираме
+                int? classId = null;
+                if (int.TryParse(Request.Query["classId"], out int parsedClassId))
+                    classId = parsedClassId;
+
+                var query = _context.Grades
                     .Include(g => g.Student).ThenInclude(s => s.Class)
                     .Include(g => g.Subject)
-                    .Where(g => mySubjectIds.Contains(g.SubjectId))
+                    .Where(g => mySubjectIds.Contains(g.SubjectId));
+
+                if (classId.HasValue)
+                    query = query.Where(g => g.Student.ClassId == classId.Value);
+
+                var grades = await query
                     .OrderByDescending(g => g.GradedAt)
                     .ToListAsync();
+
+                // Класовете на учителя за dropdown
+                var myClassIds = await _context.ClassSubjects
+                    .Where(cs => cs.TeacherId == teacher.Id)
+                    .Select(cs => cs.ClassId)
+                    .Distinct()
+                    .ToListAsync();
+
+                ViewBag.MyClasses = await _context.Classes
+                    .Where(c => myClassIds.Contains(c.Id))
+                    .OrderBy(c => c.Name)
+                    .ToListAsync();
+
+                ViewBag.SelectedClassId = classId;
 
                 return View(grades);
             }
