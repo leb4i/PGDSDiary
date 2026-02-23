@@ -112,46 +112,8 @@ else
 
     </div>
 
-    <!-- МОИТЕ ОЦЕНКИ -->
-    <div class="card">
-        <div class="card-title">
-            <i class="fas fa-star" style="color:#d97706;"></i>
-            Моите оценки
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Предмет</th>
-                    <th>Оценка</th>
-                    <th>Вид</th>
-                    <th>Дата</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var g in ViewBag.MyGrades)
-                {
-                    <tr>
-                        <td style="font-weight:600;">@g.Subject?.Name</td>
-                        <td>
-                            @{
-                                string bc = g.Value >= 6 ? "grade-6" :
-                                g.Value >= 5 ? "grade-5" :
-                                g.Value >= 4 ? "grade-4" :
-                                g.Value >= 3 ? "grade-3" : "grade-2";
-                            }
-                            <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
-                        </td>
-                        <td><span class="badge badge-gray">@g.Type</span></td>
-                        <td style="color:var(--text-muted);font-size:12px;">
-                            @g.GradedAt.ToString("dd.MM.yyyy")
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-}
 
+}
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>

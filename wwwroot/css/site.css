@@ -858,3 +858,45 @@ tbody tr:hover {
         background: #fee2e2;
         color: var(--danger);
     }
+
+/* ── ATTENDANCE BADGES ── */
+.att-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 32px;
+    height: 27px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    padding: 0 8px;
+}
+
+.att-absent {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.att-late {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.att-excused {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.att-clickable {
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+}
+
+    .att-clickable:hover {
+        transform: scale(1.15);
+        box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+    }
+
+    .att-clickable:active {
+        transform: scale(0.95);
+    }

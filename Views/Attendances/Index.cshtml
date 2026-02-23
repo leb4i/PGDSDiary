@@ -7,49 +7,229 @@
 <div class="page-header">
     <div>
         <h1>Отсъствия</h1>
-        <p>Всички записани отсъствия в системата</p>
+        <p>
+            @if (User.IsInRole("Student"))
+            {
+                <text>Твоите отсъствия</text>
+            }
+            else if (User.IsInRole("Teacher"))
+            {
+
+                <text>Отсъствия по твоите предмети</text>
+            }
+            else
+            {
+
+                <text>Всички отсъствия в системата</text>
+            }
+        </p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Добави отсъствие
-    </a>
+    @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Добави отсъствие
+        </a>
+    }
 </div>
 
-<div class="table-wrapper">
-    <table>
-        <thead>
-            <tr>
-                <th>Ученик</th>
-                <th>Предмет</th>
-                <th>Дата</th>
-                <th>Статус</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+@if (User.IsInRole("Student"))
+{
+    var grouped = Model.GroupBy(a => a.Subject?.Name).OrderBy(g => g.Key);
+    int rowNum = 1;
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
                 <tr>
-                    <td>@item.Student?.FirstName @item.Student?.LastName</td>
-                    <td>@item.Subject?.Name</td>
-                    <td>@item.Date.ToString("dd.MM.yyyy")</td>
-                    <td>
-                        @{
-                            string badgeClass = item.Status switch
-                            {
-                                "Отсъства" => "badge badge-red",
-                                "Закъснял" => "badge badge-yellow",
-                                "Извинено" => "badge badge-blue",
-                                _ => "badge"
-                            };
-                        }
-                        <span class="@badgeClass">@item.Status</span>
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline btn-sm"><i class="fas fa-pen"></i></a>
-                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger  btn-sm"><i class="fas fa-trash"></i></a>
-                    </td>
+                    <th style="width:40px;">№</th>
+                    <th>Предмет</th>
+                    <th>Закъснения</th>
+                    <th>Неуважит.</th>
+                    <th>Общо неув.</th>
+                    <th>Общо уваж.</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var group in grouped)
+                {
+                    int late = group.Count(a => a.Status == "Закъснял");
+                    int absent = group.Count(a => a.Status == "Отсъства");
+                    int excused = group.Count(a => a.Status == "Извинено");
+                    int total = absent + excused;
+
+                    <tr>
+                        <td style="color:var(--text-muted);font-weight:700;">@rowNum</td>
+                        <td style="font-weight:700;">
+                            <i class="fas fa-book-open" style="color:var(--text-muted);margin-right:8px;font-size:12px;"></i>
+                            @group.Key
+                        </td>
+                        <td>
+                            @if (late > 0)
+                            {
+                                <span class="att-badge att-late att-clickable"
+                                      onclick="showAttPopup(this)"
+                                      data-subject="@group.Key"
+                                      data-status="Закъснял"
+                                      data-dates="@string.Join(", ", group.Where(a => a.Status == "Закъснял").OrderBy(a => a.Date).Select(a => a.Date.ToString("dd.MM.yyyy")))">
+                                    @late
+                                </span>
+                            }
+                            else
+                            {
+
+                                <span style="color:var(--text-muted);">0</span>
+                            }
+                        </td>
+                        <td>
+                            @if (absent > 0)
+                            {
+                                <span class="att-badge att-absent att-clickable"
+                                      onclick="showAttPopup(this)"
+                                      data-subject="@group.Key"
+                                      data-status="Отсъства"
+                                      data-dates="@string.Join(", ", group.Where(a => a.Status == "Отсъства").OrderBy(a => a.Date).Select(a => a.Date.ToString("dd.MM.yyyy")))">
+                                    @absent
+                                </span>
+                            }
+                            else
+                            {
+
+                                <span style="color:var(--text-muted);">0</span>
+                            }
+                        </td>
+                        <td>
+                            @if (absent > 0)
+                            {
+                                <span class="att-badge att-absent">@absent</span>
+                            }
+                            else
+                            {
+
+                                <span style="color:var(--text-muted);">0</span>
+                            }
+                        </td>
+                        <td>
+                            @if (excused > 0)
+                            {
+                                <span class="att-badge att-excused att-clickable"
+                                      onclick="showAttPopup(this)"
+                                      data-subject="@group.Key"
+                                      data-status="Извинено"
+                                      data-dates="@string.Join(", ", group.Where(a => a.Status == "Извинено").OrderBy(a => a.Date).Select(a => a.Date.ToString("dd.MM.yyyy")))">
+                                    @excused
+                                </span>
+                            }
+                            else
+                            {
+
+                                <span style="color:var(--text-muted);">0</span>
+                            }
+                        </td>
+                    </tr>
+                    rowNum++;
+                }
+            </tbody>
+        </table>
+    </div>
+}
+else
+{
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>Ученик</th>
+                    <th>Клас</th>
+                    <th>Предмет</th>
+                    <th>Статус</th>
+                    <th>Дата</th>
+                    @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+                    {
+                        <th></th>
+                    }
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var a in Model)
+                {
+                    <tr>
+                        <td style="font-weight:600;">@a.Student?.FirstName @a.Student?.LastName</td>
+                        <td><span class="badge badge-green">@a.Student?.Class?.Name</span></td>
+                        <td style="color:var(--text-muted);">@a.Subject?.Name</td>
+                        <td>
+                            @{
+                                string sc = a.Status == "Отсъства" ? "badge-red" :
+                                a.Status == "Закъснял" ? "badge-yellow" : "badge-blue";
+                            }
+                            <span class="badge @sc">@a.Status</span>
+                        </td>
+                        <td style="color:var(--text-muted);font-size:12px;">@a.Date.ToString("dd.MM.yyyy")</td>
+                        @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+                        {
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@a.Id" class="btn btn-outline btn-sm">
+                                    <i class="fas fa-pen"></i>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@a.Id" class="btn btn-danger btn-sm">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<!-- POPUP -->
+<div id="attPopup" class="grade-popup" style="display:none;">
+    <button onclick="hideAttPopup()" class="grade-popup-close">
+        <i class="fas fa-xmark"></i>
+    </button>
+    <div class="grade-popup-header">
+        <span id="attPopupStatus"></span>
+    </div>
+    <div class="grade-popup-row"><i class="fas fa-book"></i> <span id="attPopupSubject"></span></div>
+    <div class="grade-popup-row" style="align-items:flex-start;">
+        <i class="fas fa-calendar" style="margin-top:2px;"></i>
+        <span id="attPopupDates" style="line-height:1.6;"></span>
+    </div>
 </div>
+<div id="attOverlay" onclick="hideAttPopup()" style="display:none;position:fixed;inset:0;z-index:998;"></div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') hideAttPopup();
+        });
+
+        function showAttPopup(el) {
+            const popup   = document.getElementById('attPopup');
+            const overlay = document.getElementById('attOverlay');
+
+            document.getElementById('attPopupStatus').textContent  = el.dataset.status;
+            document.getElementById('attPopupSubject').textContent = el.dataset.subject;
+            document.getElementById('attPopupDates').innerHTML     =
+                el.dataset.dates.split(', ').map(d => d).join('<br>');
+
+            const rect   = el.getBoundingClientRect();
+            const popupW = 220;
+            let left = rect.right + window.scrollX + 10;
+            let top  = rect.top   + window.scrollY - 10;
+
+            if (left + popupW > window.innerWidth - 20)
+                left = rect.left + window.scrollX - popupW - 10;
+
+            popup.style.top     = top + 'px';
+            popup.style.left    = left + 'px';
+            popup.style.display = 'block';
+            overlay.style.display = 'block';
+        }
+
+        function hideAttPopup() {
+            document.getElementById('attPopup').style.display  = 'none';
+            document.getElementById('attOverlay').style.display = 'none';
+        }
+    </script>
+}

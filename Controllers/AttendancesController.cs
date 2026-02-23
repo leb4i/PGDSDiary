@@ -25,14 +25,25 @@ namespace GradingSystem.Controllers
         // GET: Attendances
         public async Task<IActionResult> Index()
         {
+            if (User.IsInRole("Student"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var attendances = await _context.Attendances
+                    .Include(a => a.Student)
+                    .Include(a => a.Subject)
+                    .Where(a => a.StudentId == user!.StudentId)
+                    .OrderBy(a => a.Subject!.Name)
+                    .ToListAsync();
+                return View(attendances);
+            }
+
             if (User.IsInRole("Teacher"))
             {
                 var user = await _userManager.GetUserAsync(User);
                 var teacher = await _context.Teachers
                     .FirstOrDefaultAsync(t => t.UserId == user!.Id);
 
-                if (teacher == null)
-                    return View(new List<Attendance>());
+                if (teacher == null) return View(new List<Attendance>());
 
                 var mySubjectIds = await _context.ClassSubjects
                     .Where(cs => cs.TeacherId == teacher.Id)
@@ -50,13 +61,13 @@ namespace GradingSystem.Controllers
                 return View(attendances);
             }
 
-            var allAttendances = await _context.Attendances
+            var all = await _context.Attendances
                 .Include(a => a.Student).ThenInclude(s => s.Class)
                 .Include(a => a.Subject)
                 .OrderByDescending(a => a.Date)
                 .ToListAsync();
 
-            return View(allAttendances);
+            return View(all);
         }
 
         // GET: Attendances/Details/5

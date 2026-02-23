@@ -4,10 +4,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace GradingSystem.Controllers
 {
@@ -22,9 +18,10 @@ namespace GradingSystem.Controllers
             _userManager = userManager;
         }
 
-        // GET: Grades
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? classId, int page = 1)
         {
+            const int pageSize = 50;
+
             if (User.IsInRole("Student"))
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -51,10 +48,11 @@ namespace GradingSystem.Controllers
                     .Distinct()
                     .ToListAsync();
 
-                // Ако е избран клас — филтрираме
-                int? classId = null;
-                if (int.TryParse(Request.Query["classId"], out int parsedClassId))
-                    classId = parsedClassId;
+                var myClassIds = await _context.ClassSubjects
+                    .Where(cs => cs.TeacherId == teacher.Id)
+                    .Select(cs => cs.ClassId)
+                    .Distinct()
+                    .ToListAsync();
 
                 var query = _context.Grades
                     .Include(g => g.Student).ThenInclude(s => s.Class)
@@ -68,54 +66,62 @@ namespace GradingSystem.Controllers
                     .OrderByDescending(g => g.GradedAt)
                     .ToListAsync();
 
-                // Класовете на учителя за dropdown
-                var myClassIds = await _context.ClassSubjects
-                    .Where(cs => cs.TeacherId == teacher.Id)
-                    .Select(cs => cs.ClassId)
-                    .Distinct()
-                    .ToListAsync();
-
                 ViewBag.MyClasses = await _context.Classes
                     .Where(c => myClassIds.Contains(c.Id))
-                    .OrderBy(c => c.Name)
+                    .OrderBy(c => int.Parse(string.Concat(c.Name.TakeWhile(char.IsDigit))))
+                    .ThenBy(c => c.Name)
                     .ToListAsync();
 
                 ViewBag.SelectedClassId = classId;
-
                 return View(grades);
             }
 
-            // Admin вижда всичко
-            var allGrades = await _context.Grades
+            // Admin
+            ViewBag.AllClasses = (await _context.Classes.ToListAsync())
+                .OrderBy(c => int.Parse(string.Concat(c.Name.TakeWhile(char.IsDigit))))
+                .ThenBy(c => c.Name)
+                .ToList();
+
+            ViewBag.SelectedClassId = classId;
+            ViewBag.TotalCount = 0;
+
+            if (!classId.HasValue)
+                return View(new List<Grade>());
+
+            var totalCount = await _context.Grades
+                .Where(g => g.Student.ClassId == classId.Value)
+                .CountAsync();
+
+            var adminGrades = await _context.Grades
                 .Include(g => g.Student).ThenInclude(s => s.Class)
                 .Include(g => g.Subject)
+                .Where(g => g.Student.ClassId == classId.Value)
                 .OrderByDescending(g => g.GradedAt)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
 
-            return View(allGrades);
+            ViewBag.TotalCount = totalCount;
+            ViewBag.CurrentPage = page;
+            ViewBag.TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return View(adminGrades);
         }
 
-        // GET: Grades/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var grade = await _context.Grades
                 .Include(g => g.Student)
                 .Include(g => g.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (grade == null)
-            {
-                return NotFound();
-            }
+
+            if (grade == null) return NotFound();
 
             return View(grade);
         }
 
-        // GET: Grades/Create
         public IActionResult Create()
         {
             ViewBag.StudentId = new SelectList(
@@ -127,10 +133,6 @@ namespace GradingSystem.Controllers
             return View();
         }
 
-
-        // POST: Grades/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,StudentId,SubjectId,Value,Type,GradedAt,Comment")] Grade grade)
@@ -151,8 +153,6 @@ namespace GradingSystem.Controllers
             return View(grade);
         }
 
-
-        // GET: Grades/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -169,9 +169,6 @@ namespace GradingSystem.Controllers
             return View(grade);
         }
 
-        // POST: Grades/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,StudentId,SubjectId,Value,Type,GradedAt,Comment")] Grade grade)
@@ -194,36 +191,27 @@ namespace GradingSystem.Controllers
             return View(grade);
         }
 
-        // GET: Grades/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var grade = await _context.Grades
                 .Include(g => g.Student)
                 .Include(g => g.Subject)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (grade == null)
-            {
-                return NotFound();
-            }
+
+            if (grade == null) return NotFound();
 
             return View(grade);
         }
 
-        // POST: Grades/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var grade = await _context.Grades.FindAsync(id);
             if (grade != null)
-            {
                 _context.Grades.Remove(grade);
-            }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

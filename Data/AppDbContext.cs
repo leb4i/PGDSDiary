@@ -1,6 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using GradingSystem.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using GradingSystem.Models;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace GradingSystem.Data
 {
@@ -129,6 +130,34 @@ namespace GradingSystem.Data
                     .HasForeignKey(ss => ss.SubjectId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            // Индекси за по-бързо зареждане
+            builder.Entity<Grade>()
+                .HasIndex(g => g.StudentId);
+
+            builder.Entity<Grade>()
+                .HasIndex(g => g.SubjectId);
+
+            builder.Entity<Grade>()
+                .HasIndex(g => g.GradedAt);
+
+            builder.Entity<Attendance>()
+                .HasIndex(a => a.StudentId);
+
+            builder.Entity<Attendance>()
+                .HasIndex(a => a.SubjectId);
+
+            builder.Entity<ScheduleSlot>()
+                .HasIndex(ss => ss.ClassId);
+
+            builder.Entity<Student>()
+                .HasIndex(s => s.ClassId);
+
+            builder.Entity<ClassSubject>()
+                .HasIndex(cs => cs.TeacherId);
+
+            builder.Entity<ClassSubject>()
+                .HasIndex(cs => cs.ClassId);
         }
     }
 }

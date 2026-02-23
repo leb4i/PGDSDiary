@@ -2,6 +2,17 @@
 
 @{
     ViewData["Title"] = "Оценки";
+    double[] validVals = { 2, 3, 3.5, 4, 4.5, 5, 5.5, 6 };
+
+    bool IsFirstSemester(DateTime d) => d.Month >= 9 || d.Month <= 1;
+    bool IsSecondSemester(DateTime d) => d.Month >= 2 && d.Month <= 8;
+
+    double? CalcPredicted(IEnumerable<double> vals)
+    {
+        if (!vals.Any()) return null;
+        double avg = vals.Average();
+        return validVals.OrderBy(v => Math.Abs(v - avg)).First();
+    }
 }
 
 <div class="page-header">
@@ -32,6 +43,34 @@
     }
 </div>
 
+@* ФИЛТЪР ЗА ADMIN *@
+@if (User.IsInRole("Admin"))
+{
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-title">
+            <i class="fas fa-filter" style="color:var(--accent);"></i>
+            Избери клас
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            @foreach (var c in ViewBag.AllClasses)
+            {
+                <a href="/Grades?classId=@c.Id"
+                   class="btn @(ViewBag.SelectedClassId == c.Id ? "btn-primary" : "btn-outline") btn-sm">
+                    @c.Name
+                </a>
+            }
+        </div>
+    </div>
+
+    @if (ViewBag.SelectedClassId == null)
+    {
+        <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);">
+            <i class="fas fa-arrow-up" style="font-size:24px;margin-bottom:12px;display:block;"></i>
+            Избери клас за да видиш оценките
+        </div>
+    }
+}
+
 @* ФИЛТЪР ЗА УЧИТЕЛ *@
 @if (User.IsInRole("Teacher") && ViewBag.MyClasses != null)
 {
@@ -45,54 +84,70 @@
                class="btn @(ViewBag.SelectedClassId == null ? "btn-primary" : "btn-outline") btn-sm">
                 Всички класове
             </a>
-            @foreach (var cls in ViewBag.MyClasses)
+            @foreach (var c in ViewBag.MyClasses)
             {
-                <a href="/Grades?classId=@cls.Id"
-                   class="btn @(ViewBag.SelectedClassId == cls.Id ? "btn-primary" : "btn-outline") btn-sm">
-                    @cls.Name
+                <a href="/Grades?classId=@c.Id"
+                   class="btn @(ViewBag.SelectedClassId == c.Id ? "btn-primary" : "btn-outline") btn-sm">
+                    @c.Name
                 </a>
             }
         </div>
     </div>
 }
 
+@* STUDENT ИЗГЛЕД *@
 @if (User.IsInRole("Student"))
 {
-    @* ГРУПИРАНИ ПО ПРЕДМЕТ *@
     var grouped = Model.GroupBy(g => g.Subject?.Name).OrderBy(g => g.Key);
     int rowNum = 1;
-    <div class="table-wrapper">
-        <table>
+
+    <div class="table-wrapper" style="overflow-x:auto;">
+        <table style="min-width:900px;">
             <thead>
                 <tr>
-                    <th style="width:40px;">№</th>
-                    <th>Предмет</th>
-                    <th>Текущи оценки</th>
-                    <th>Среден успех</th>
+                    <th rowspan="2" style="width:36px;border-right:1px solid var(--border);">№</th>
+                    <th rowspan="2" style="border-right:1px solid var(--border);">Предмет</th>
+                    <th colspan="2" style="text-align:center;background:#f0f4ff;border-right:1px solid var(--border);">Първи срок</th>
+                    <th colspan="2" style="text-align:center;background:#f0fff4;border-right:1px solid var(--border);">Втори срок</th>
+                    <th rowspan="2" style="text-align:center;background:#fefce8;">Годишна</th>
+                </tr>
+                <tr>
+                    <th style="background:#f0f4ff;font-size:10px;">Текущи</th>
+                    <th style="background:#f0f4ff;font-size:10px;border-right:1px solid var(--border);">Срочна</th>
+                    <th style="background:#f0fff4;font-size:10px;">Текущи</th>
+                    <th style="background:#f0fff4;font-size:10px;border-right:1px solid var(--border);">Срочна</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var group in grouped)
                 {
-                    var avg = group.Average(g => (double)g.Value);
-                    string avgClass = avg >= 5.5 ? "grade-6" :
-                                      avg >= 4.5 ? "grade-5" :
-                                      avg >= 3.5 ? "grade-4" :
-                                      avg >= 3.0 ? "grade-3" : "grade-2";
+                    var s1 = group.Where(g => IsFirstSemester(g.GradedAt)).ToList();
+                    var s2 = group.Where(g => IsSecondSemester(g.GradedAt)).ToList();
+
+                    double? pred1 = CalcPredicted(s1.Select(g => (double)g.Value));
+                    double? pred2 = CalcPredicted(s2.Select(g => (double)g.Value));
+
+                    double? annual = null;
+                    if (pred1.HasValue && pred2.HasValue)
+                        annual = validVals.OrderBy(v => Math.Abs(v - (pred1.Value + pred2.Value) / 2.0)).First();
+                    else if (pred1.HasValue) annual = pred1;
+                    else if (pred2.HasValue) annual = pred2;
+
+                    string GradeClass(double v) => v >= 5.5 ? "grade-6" : v >= 4.5 ? "grade-5" : v >= 3.5 ? "grade-4" : v >= 3.0 ? "grade-3" : "grade-2";
+
                     <tr>
-                        <td style="color:var(--text-muted);font-weight:700;">@rowNum</td>
-                        <td style="font-weight:700;">
+                        <td style="color:var(--text-muted);font-weight:700;border-right:1px solid var(--border);">@rowNum</td>
+                        <td style="font-weight:700;border-right:1px solid var(--border);">
                             <i class="fas fa-book-open" style="color:var(--text-muted);margin-right:8px;font-size:12px;"></i>
                             @group.Key
                         </td>
-                        <td>
-                            <div style="display:flex;gap:5px;flex-wrap:wrap;">
-                                @foreach (var g in group.OrderBy(g => g.GradedAt))
+
+                        @* ПЪРВИ СРОК — текущи *@
+                        <td style="background:#fafbff;">
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                @foreach (var g in s1.OrderBy(g => g.GradedAt))
                                 {
-                                    string bc = g.Value >= 6 ? "grade-6" :
-                                    g.Value >= 5 ? "grade-5" :
-                                    g.Value >= 4 ? "grade-4" :
-                                    g.Value >= 3 ? "grade-3" : "grade-2";
+                                    string bc = GradeClass((double)g.Value);
                                     <span class="grade-badge @bc grade-clickable"
                                           onclick="showGradePopup(this)"
                                           data-value="@g.Value.ToString("F2")"
@@ -104,8 +159,47 @@
                                 }
                             </div>
                         </td>
-                        <td>
-                            <span class="grade-badge @avgClass">@avg.ToString("F2")</span>
+
+                        @* ПЪРВИ СРОК — срочна *@
+                        <td style="background:#fafbff;border-right:1px solid var(--border);">
+                            @if (pred1.HasValue)
+                            {
+                                <span class="grade-badge @GradeClass(pred1.Value)">@pred1.Value.ToString("F2")</span>
+                            }
+                        </td>
+
+                        @* ВТОРИ СРОК — текущи *@
+                        <td style="background:#f6fff9;">
+                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                @foreach (var g in s2.OrderBy(g => g.GradedAt))
+                                {
+                                    string bc = GradeClass((double)g.Value);
+                                    <span class="grade-badge @bc grade-clickable"
+                                          onclick="showGradePopup(this)"
+                                          data-value="@g.Value.ToString("F2")"
+                                          data-type="@g.Type"
+                                          data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
+                                          data-subject="@group.Key">
+                                        @g.Value.ToString("F0")
+                                    </span>
+                                }
+                            </div>
+                        </td>
+
+                        @* ВТОРИ СРОК — срочна *@
+                        <td style="background:#f6fff9;border-right:1px solid var(--border);">
+                            @if (pred2.HasValue)
+                            {
+                                <span class="grade-badge @GradeClass(pred2.Value)">@pred2.Value.ToString("F2")</span>
+                            }
+                        </td>
+
+                        @* ГОДИШНА *@
+                        <td style="background:#fefce8;text-align:center;">
+                            @if (annual.HasValue)
+                            {
+                                <span class="grade-badge @GradeClass(annual.Value)" style="font-size:14px;">@annual.Value.ToString("F2")</span>
+                            }
                         </td>
                     </tr>
                     rowNum++;
@@ -114,21 +208,43 @@
         </table>
     </div>
 }
-else
+
+@* ADMIN / TEACHER ИЗГЛЕД *@
+else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
 {
+    @* Филтър срок *@
+    var semFilter = Context.Request.Query["sem"].ToString();
+    var filtered = Model.AsEnumerable();
+    if (semFilter == "1") filtered = filtered.Where(g => IsFirstSemester(g.GradedAt));
+    else if (semFilter == "2") filtered = filtered.Where(g => IsSecondSemester(g.GradedAt));
+
+    <div style="display:flex;gap:8px;margin-bottom:16px;">
+        <a href="@(User.IsInRole("Admin") ? $"/Grades?classId={ViewBag.SelectedClassId}" : "/Grades")"
+           class="btn @(semFilter == "" ? "btn-primary" : "btn-outline") btn-sm">
+            Всички
+        </a>
+        <a href="@(User.IsInRole("Admin") ? $"/Grades?classId={ViewBag.SelectedClassId}&sem=1" : "/Grades?sem=1")"
+           class="btn @(semFilter == "1" ? "btn-primary" : "btn-outline") btn-sm">
+            Първи срок
+        </a>
+        <a href="@(User.IsInRole("Admin") ? $"/Grades?classId={ViewBag.SelectedClassId}&sem=2" : "/Grades?sem=2")"
+           class="btn @(semFilter == "2" ? "btn-primary" : "btn-outline") btn-sm">
+            Втори срок
+        </a>
+    </div>
+
     <div class="table-wrapper">
         <table>
             <thead>
                 <tr>
                     <th>Ученик</th>
-                    @if (!User.IsInRole("Student"))
-                    {
-                        <th>Клас</th>
-                    }
+                    <th>Клас</th>
                     <th>Предмет</th>
+                    <th>Срок</th>
                     <th>Оценка</th>
                     <th>Вид</th>
                     <th>Дата</th>
+                    <th>Прогнозна</th>
                     @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                     {
                         <th></th>
@@ -136,23 +252,33 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var g in Model)
+                @foreach (var g in filtered)
                 {
+                    bool isS1 = IsFirstSemester(g.GradedAt);
+                    var studentGrades = Model
+                    .Where(x => x.StudentId == g.StudentId && x.SubjectId == g.SubjectId && IsFirstSemester(x.GradedAt) == isS1)
+                    .Select(x => (double)x.Value).ToList();
+                    double pred = validVals.OrderBy(v => Math.Abs(v - studentGrades.Average())).First();
+                    string predCls = pred >= 5.5 ? "grade-6" : pred >= 4.5 ? "grade-5" : pred >= 3.5 ? "grade-4" : pred >= 3.0 ? "grade-3" : "grade-2";
+
                     <tr>
                         <td style="font-weight:600;">@g.Student?.FirstName @g.Student?.LastName</td>
                         <td><span class="badge badge-green">@g.Student?.Class?.Name</span></td>
                         <td style="color:var(--text-muted);">@g.Subject?.Name</td>
                         <td>
+                            <span class="badge @(isS1 ? "badge-blue" : "badge-green")">
+                                @(isS1 ? "I срок" : "II срок")
+                            </span>
+                        </td>
+                        <td>
                             @{
-                                string bc = g.Value >= 6 ? "grade-6" :
-                                            g.Value >= 5 ? "grade-5" :
-                                            g.Value >= 4 ? "grade-4" :
-                                            g.Value >= 3 ? "grade-3" : "grade-2";
+                                string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
                             }
                             <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
                         </td>
                         <td><span class="badge badge-gray">@g.Type</span></td>
                         <td style="color:var(--text-muted);font-size:12px;">@g.GradedAt.ToString("dd.MM.yyyy")</td>
+                        <td><span class="grade-badge @predCls">@pred.ToString("F2")</span></td>
                         @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                         {
                             <td>
@@ -168,8 +294,27 @@ else
                 }
             </tbody>
         </table>
+
+        @if (User.IsInRole("Admin") && ViewBag.TotalPages > 1)
+        {
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-top:1px solid var(--border);">
+                <span style="font-size:13px;color:var(--text-muted);font-weight:600;">
+                    Показани @filtered.Count() от @ViewBag.TotalCount оценки
+                </span>
+                <div style="display:flex;gap:6px;">
+                    @for (int p = 1; p <= ViewBag.TotalPages; p++)
+                    {
+                        <a href="/Grades?classId=@ViewBag.SelectedClassId&page=@p&sem=@semFilter"
+                           class="btn @(ViewBag.CurrentPage == p ? "btn-primary" : "btn-outline") btn-sm">
+                            @p
+                        </a>
+                    }
+                </div>
+            </div>
+        }
     </div>
 }
+
 <!-- POPUP -->
 <div id="gradePopup" class="grade-popup" style="display:none;">
     <button onclick="hideGradePopup()" class="grade-popup-close">
@@ -182,7 +327,8 @@ else
     <div class="grade-popup-row"><i class="fas fa-tag"></i> <span id="popupType"></span></div>
     <div class="grade-popup-row"><i class="fas fa-book"></i> <span id="popupSubject"></span></div>
     <div class="grade-popup-row"><i class="fas fa-user"></i> <span id="popupBy"></span></div>
-</div
+</div>
+<div id="gradeOverlay" onclick="hideGradePopup()" style="display:none;position:fixed;inset:0;z-index:998;"></div>
 
 @section Scripts {
     <script>
@@ -191,30 +337,31 @@ else
         });
 
         function showGradePopup(el) {
-            const popup = document.getElementById('gradePopup');
+            const popup   = document.getElementById('gradePopup');
             const overlay = document.getElementById('gradeOverlay');
-            document.getElementById('popupValue').textContent = 'Оценка: ' + el.dataset.value;
-            document.getElementById('popupDate').textContent = el.dataset.date;
-            document.getElementById('popupType').textContent = el.dataset.type;
-            document.getElementById('popupSubject').textContent = el.dataset.subject;
-            document.getElementById('popupBy').textContent = 'Въведена от: ' + el.dataset.by;
 
-            const rect = el.getBoundingClientRect();
+            document.getElementById('popupValue').textContent   = 'Оценка: ' + el.dataset.value;
+            document.getElementById('popupDate').textContent    = el.dataset.date;
+            document.getElementById('popupType').textContent    = el.dataset.type;
+            document.getElementById('popupSubject').textContent = el.dataset.subject;
+            document.getElementById('popupBy').textContent      = el.dataset.by ? 'Въведена от: ' + el.dataset.by : '';
+
+            const rect   = el.getBoundingClientRect();
             const popupW = 220;
             let left = rect.right + window.scrollX + 10;
-            let top  = rect.top  + window.scrollY - 10;
+            let top  = rect.top   + window.scrollY - 10;
 
             if (left + popupW > window.innerWidth - 20)
                 left = rect.left + window.scrollX - popupW - 10;
 
-            popup.style.top  = top + 'px';
-            popup.style.left = left + 'px';
+            popup.style.top     = top + 'px';
+            popup.style.left    = left + 'px';
             popup.style.display = 'block';
             overlay.style.display = 'block';
         }
 
         function hideGradePopup() {
-            document.getElementById('gradePopup').style.display = 'none';
+            document.getElementById('gradePopup').style.display  = 'none';
             document.getElementById('gradeOverlay').style.display = 'none';
         }
     </script>
