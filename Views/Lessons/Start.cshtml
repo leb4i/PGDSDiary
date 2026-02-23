@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Провеждане на час";
+    var cls = ViewBag.Class as GradingSystem.Models.Class;
+    var subject = ViewBag.Subject as GradingSystem.Models.Subject;
+    var students = ViewBag.Students as List<GradingSystem.Models.Student> ?? new();
+    var lesson = ViewBag.Lesson as GradingSystem.Models.Lesson;
+}
+
+<div class="page-header">
+    <div>
+        <h1>@subject?.Name</h1>
+        <p>Клас @cls?.Name — @DateTime.Now.ToString("dd.MM.yyyy")</p>
+    </div>
+    <a href="/Lessons" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Назад
+    </a>
+</div>
+
+<form method="post" action="/Lessons/Save">
+    <input type="hidden" name="classId" value="@cls?.Id" />
+    <input type="hidden" name="subjectId" value="@subject?.Id" />
+
+    <!-- ТЕМА -->
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-title">
+            <i class="fas fa-book-open" style="color:var(--accent);"></i>
+            Тема на урока
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <input type="text" name="topic" class="form-control"
+                   placeholder="Въведи тема на урока..."
+                   value="@(lesson?.Topic ?? "")" required />
+        </div>
+    </div>
+
+    <!-- УЧЕНИЦИ -->
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-users" style="color:var(--accent);"></i>
+            Ученици — @students.Count
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Ученик</th>
+                    <th style="text-align:center;">Присъства</th>
+                    <th style="text-align:center;color:#b45309;">Закъснял</th>
+                    <th style="text-align:center;color:#b91c1c;">Отсъства</th>
+                    <th>Оценка</th>
+                    <th>Вид</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in students)
+                {
+                    <tr id="row-@s.Id">
+                        <td style="font-weight:600;">@s.FirstName @s.LastName</td>
+
+                        <td style="text-align:center;">
+                            <label class="status-btn status-present">
+                                <input type="radio" name="status_@s.Id" value="present"
+                                       checked onchange="setStatus(@s.Id, 'present')" hidden />
+                                <i class="fas fa-check"></i>
+                            </label>
+                        </td>
+                        <td style="text-align:center;">
+                            <label class="status-btn status-late">
+                                <input type="radio" name="status_@s.Id" value="late"
+                                       onchange="setStatus(@s.Id, 'late')" hidden />
+                                <i class="fas fa-clock"></i>
+                            </label>
+                        </td>
+                        <td style="text-align:center;">
+                            <label class="status-btn status-absent">
+                                <input type="radio" name="status_@s.Id" value="absent"
+                                       onchange="setStatus(@s.Id, 'absent')" hidden />
+                                <i class="fas fa-xmark"></i>
+                            </label>
+                        </td>
+
+                        <td>
+                            <select name="grades[@s.Id]" class="grade-dropdown" onchange="colorGrade(this)">
+                                <option value="0" class="grade-opt-none">—</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="3.5">3.50</option>
+                                <option value="4">4</option>
+                                <option value="4.5">4.50</option>
+                                <option value="5">5</option>
+                                <option value="5.5">5.50</option>
+                                <option value="6">6</option>
+                            </select>
+                        </td>
+
+                        <td>
+                            <select name="gradeTypes[@s.Id]" class="form-select" style="width:120px;">
+                                <option>Устен</option>
+                                <option>Тест</option>
+                                <option>Контролно</option>
+                                <option>Домашна работа</option>
+                            </select>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <!-- Скрити полета за absent/late -->
+        <div id="hiddenFields"></div>
+
+        <div style="padding:16px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;">
+            <a href="/Lessons" class="btn btn-outline">Откажи</a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-floppy-disk"></i> Запази
+            </button>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    <script>
+
+       function colorGrade(sel) {
+            const v = parseFloat(sel.value);
+            sel.className = 'grade-dropdown ' + (
+                isNaN(v) || v == 0 ? 'g-none' :
+                v >= 6   ? 'g-6' :
+                v >= 5   ? 'g-5' :
+                v >= 4   ? 'g-4' :
+                v >= 3   ? 'g-3' : 'g-2'
+            );
+        }
+
+        // Оцвети при зареждане
+        document.querySelectorAll('.grade-dropdown').forEach(colorGrade);
+
+        const statusMap = {};
+
+        function setStatus(studentId, status) {
+            statusMap[studentId] = status;
+            const row = document.getElementById('row-' + studentId);
+            row.style.background =
+                status === 'absent' ? '#fff5f5' :
+                status === 'late'   ? '#fffbeb' : '';
+            updateHiddenFields();
+        }
+
+        function updateHiddenFields() {
+            const container = document.getElementById('hiddenFields');
+            container.innerHTML = '';
+            for (const [id, status] of Object.entries(statusMap)) {
+                if (status === 'absent') {
+                    container.innerHTML +=
+                        `<input type="hidden" name="absentStudents" value="${id}" />`;
+                } else if (status === 'late') {
+                    container.innerHTML +=
+                        `<input type="hidden" name="lateStudents" value="${id}" />`;
+                }
+            }
+        }
+    </script>
+}

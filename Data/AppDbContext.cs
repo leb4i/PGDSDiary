@@ -18,6 +18,7 @@ namespace GradingSystem.Data
         public DbSet<ScheduleSlot> ScheduleSlots { get; set; } = default!;
         public DbSet<Teacher> Teachers { get; set; } = default!;
         public DbSet<ClassSubject> ClassSubjects { get; set; } = default!;
+        public DbSet<Lesson> Lessons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

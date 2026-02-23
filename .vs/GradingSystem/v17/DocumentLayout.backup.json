@@ -3,20 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\views\\grades\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\grades\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\views\\lessons\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\lessons\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\controllers\\lessonscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\lessonscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\views\\attendances\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\attendances\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\controllers\\attendancescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\attendancescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\views\\lessons\\history.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\lessons\\history.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -56,50 +52,39 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Grades\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Grades\\Index.cshtml",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Grades\\Index.cshtml",
-              "RelativeToolTip": "Views\\Grades\\Index.cshtml",
-              "ViewState": "AgIAAFsBAAAAAAAAAADwv28BAAABAAAAAAAAAA==",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Lessons\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Lessons\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Lessons\\Index.cshtml",
+              "RelativeToolTip": "Views\\Lessons\\Index.cshtml",
+              "ViewState": "AgIAACgAAAAAAAAAAAAUwEgAAAAVAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-23T17:03:01.939Z",
+              "WhenOpened": "2026-02-23T18:50:20.839Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Attendances\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Attendances\\Index.cshtml",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Attendances\\Index.cshtml",
-              "RelativeToolTip": "Views\\Attendances\\Index.cshtml",
-              "ViewState": "AgIAAFwAAAAAAAAAAAAmwHoAAAAdAAAAAAAAAA==",
+              "Title": "History.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Lessons\\History.cshtml",
+              "RelativeDocumentMoniker": "Views\\Lessons\\History.cshtml",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Lessons\\History.cshtml",
+              "RelativeToolTip": "Views\\Lessons\\History.cshtml",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAACQAAAAZAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-02-23T14:58:02.007Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AttendancesController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\AttendancesController.cs",
-              "RelativeDocumentMoniker": "Controllers\\AttendancesController.cs",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\AttendancesController.cs",
-              "RelativeToolTip": "Controllers\\AttendancesController.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACIAAAAyAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-23T14:56:21.266Z"
+              "WhenOpened": "2026-02-23T18:41:55.714Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "wwwroot\\css\\site.css",
-              "ViewState": "AgIAAOIBAAAAAAAAAAAIwF0DAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-02-23T14:55:42.582Z",
+              "Title": "LessonsController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\LessonsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\LessonsController.cs",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\LessonsController.cs",
+              "RelativeToolTip": "Controllers\\LessonsController.cs",
+              "ViewState": "AgIAADMAAAAAAAAAAAAAAOUAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-23T18:39:40.716Z",
               "EditorCaption": ""
             }
           ]

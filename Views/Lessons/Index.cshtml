@@ -1,0 +1,78 @@
+﻿@model IEnumerable<GradingSystem.Models.ScheduleSlot>
+@{
+    ViewData["Title"] = "Започни час";
+    var todayLessons = ViewBag.TodayLessons as List<GradingSystem.Models.Lesson> ?? new();
+}
+
+@if (TempData["Success"] != null)
+{
+    <div style="background:#dcfce7;border:1px solid #86efac;border-radius:10px;padding:12px 18px;margin-bottom:20px;display:flex;align-items:center;gap:10px;font-weight:700;color:#15803d;">
+        <i class="fas fa-circle-check"></i>
+        @TempData["Success"]
+    </div>
+}
+
+<div class="page-header">
+    <div>
+        <h1>Започни час</h1>
+        <p>Днешните ти часове — @DateTime.Now.ToString("dddd, dd MMMM yyyy")</p>
+    </div>
+    <a href="/Lessons/History" class="btn btn-outline">
+        <i class="fas fa-clock-rotate-left"></i> История
+    </a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);">
+        <i class="fas fa-calendar-xmark" style="font-size:32px;margin-bottom:12px;display:block;"></i>
+        Нямаш часове днес
+    </div>
+}
+else
+{
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;">
+        @foreach (var slot in Model)
+        {
+            var lesson  = todayLessons.FirstOrDefault(l =>
+                l.ClassId == slot.ClassId && l.SubjectId == slot.SubjectId);
+            bool started = lesson != null;
+
+            <div class="lesson-card @(started ? "lesson-started" : "")">
+                <div class="lesson-card-header">
+                    <span class="badge badge-blue">@slot.PeriodNumber час</span>
+                    <span style="font-size:12px;color:var(--text-muted);font-weight:600;">
+                        @slot.StartTime.ToString("HH:mm") — @slot.EndTime.ToString("HH:mm")
+                    </span>
+                </div>
+                <div class="lesson-card-body">
+                    <div class="lesson-subject">@slot.Subject?.Name</div>
+                    <div class="lesson-class">
+                        <i class="fas fa-users" style="font-size:12px;"></i> @slot.Class?.Name
+                    </div>
+                    @if (started)
+                    {
+                        <div class="lesson-topic">
+                            <i class="fas fa-book" style="font-size:11px;"></i>
+                            @lesson!.Topic
+                        </div>
+                    }
+                </div>
+                <div class="lesson-card-footer"  style="text-align:center;">
+                <a href="/Lessons/Start?classId=@slot.ClassId&subjectId=@slot.SubjectId"
+                   class="btn @(started ? "btn-outline" : "btn-primary")"
+                   style="width:auto;font-size:11px;padding:5px 14px;">
+                @if (started)
+                {
+                   <i class="fas fa-pen"></i> <text>Редактирай</text>
+                }
+                else
+                {
+                   <i class="fas fa-play"></i> <text>Започни час</text>
+                 }
+                 </a>
+                </div>
+            </div>
+        }
+    </div>
+}

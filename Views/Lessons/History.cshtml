@@ -1,0 +1,65 @@
+﻿@model IEnumerable<GradingSystem.Models.Lesson>
+
+@{
+    ViewData["Title"] = "История на уроците";
+    var gradesCounts = ViewBag.GradesCounts as Dictionary<int, int> ?? new();
+    var attendanceCounts = ViewBag.AttendanceCounts as Dictionary<int, int> ?? new();
+}
+
+<div class="page-header">
+    <div>
+        <h1>История на уроците</h1>
+        <p>Всички твои проведени часове</p>
+    </div>
+    <a href="/Lessons" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Назад
+    </a>
+</div>
+
+<div class="table-wrapper">
+    <table>
+        <thead>
+            <tr>
+                <th>Дата</th>
+                <th>Предмет</th>
+                <th>Клас</th>
+                <th>Тема</th>
+                <th style="text-align:center;">Оценки</th>
+                <th style="text-align:center;">Отсъствия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var l in Model)
+            {
+                <tr>
+                    <td style="color:var(--text-muted);font-size:12px;font-weight:600;">
+                        @l.Date.ToString("dd.MM.yyyy")
+                    </td>
+                    <td style="font-weight:700;">@l.Subject?.Name</td>
+                    <td><span class="badge badge-green">@l.Class?.Name</span></td>
+                    <td style="color:var(--text-muted);">@l.Topic</td>
+                    <td style="text-align:center;">
+                        @if (gradesCounts.GetValueOrDefault(l.Id) > 0)
+                        {
+                            <span class="badge badge-blue">@gradesCounts[l.Id]</span>
+                        }
+                        else
+                        {
+                            <span style="color:var(--text-muted);">—</span>
+                        }
+                    </td>
+                    <td style="text-align:center;">
+                        @if (attendanceCounts.GetValueOrDefault(l.Id) > 0)
+                        {
+                            <span class="badge badge-red">@attendanceCounts[l.Id]</span>
+                        }
+                        else
+                        {
+                            <span style="color:var(--text-muted);">—</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
