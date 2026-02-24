@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GradingSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260223171354_AddLesson")]
-    partial class AddLesson
+    [Migration("20260224162943_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -357,6 +357,9 @@ namespace GradingSystem.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("ShortName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

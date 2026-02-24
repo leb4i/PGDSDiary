@@ -6,6 +6,7 @@ namespace GradingSystem.Models
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;  // "Математика"
+        public string? ShortName { get; set; }
 
         // Навигация
         public ICollection<Grade> Grades { get; set; } = new List<Grade>();

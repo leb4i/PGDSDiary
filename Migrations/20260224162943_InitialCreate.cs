@@ -44,7 +44,8 @@ namespace GradingSystem.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    ShortName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -267,6 +268,41 @@ namespace GradingSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Lessons",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ClassId = table.Column<int>(type: "int", nullable: false),
+                    SubjectId = table.Column<int>(type: "int", nullable: false),
+                    TeacherId = table.Column<int>(type: "int", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Topic = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Lessons", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Lessons_Classes_ClassId",
+                        column: x => x.ClassId,
+                        principalTable: "Classes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lessons_Subjects_SubjectId",
+                        column: x => x.SubjectId,
+                        principalTable: "Subjects",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Lessons_Teachers_TeacherId",
+                        column: x => x.TeacherId,
+                        principalTable: "Teachers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Attendances",
                 columns: table => new
                 {
@@ -422,6 +458,11 @@ namespace GradingSystem.Migrations
                 column: "ClassSubjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Attendances_StudentId",
+                table: "Attendances",
+                column: "StudentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Attendances_StudentId_SubjectId_Date",
                 table: "Attendances",
                 columns: new[] { "StudentId", "SubjectId", "Date" },
@@ -459,6 +500,11 @@ namespace GradingSystem.Migrations
                 column: "ClassSubjectId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Grades_GradedAt",
+                table: "Grades",
+                column: "GradedAt");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Grades_StudentId",
                 table: "Grades",
                 column: "StudentId");
@@ -467,6 +513,26 @@ namespace GradingSystem.Migrations
                 name: "IX_Grades_SubjectId",
                 table: "Grades",
                 column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_ClassId",
+                table: "Lessons",
+                column: "ClassId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_SubjectId",
+                table: "Lessons",
+                column: "SubjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Lessons_TeacherId",
+                table: "Lessons",
+                column: "TeacherId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ScheduleSlots_ClassId",
+                table: "ScheduleSlots",
+                column: "ClassId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduleSlots_ClassId_DayOfWeek_PeriodNumber",
@@ -526,6 +592,9 @@ namespace GradingSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "Grades");
+
+            migrationBuilder.DropTable(
+                name: "Lessons");
 
             migrationBuilder.DropTable(
                 name: "ScheduleSlots");

@@ -23,7 +23,7 @@ namespace GradingSystem.Controllers
         }
 
         // GET: Attendances
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? classId)
         {
             if (User.IsInRole("Student"))
             {
@@ -61,13 +61,26 @@ namespace GradingSystem.Controllers
                 return View(attendances);
             }
 
-            var all = await _context.Attendances
+            // Admin
+            var allClasses = await _context.Classes.ToListAsync();
+            ViewBag.AllClasses = allClasses
+                .OrderBy(c => int.Parse(string.Concat(c.Name.TakeWhile(char.IsDigit))))
+                .ThenBy(c => c.Name)
+                .ToList();
+
+            ViewBag.SelectedClassId = classId;
+
+            if (!classId.HasValue)
+                return View(new List<Attendance>());
+
+            var adminAttendances = await _context.Attendances
                 .Include(a => a.Student).ThenInclude(s => s.Class)
                 .Include(a => a.Subject)
+                .Where(a => a.Student.ClassId == classId.Value)
                 .OrderByDescending(a => a.Date)
                 .ToListAsync();
 
-            return View(all);
+            return View(adminAttendances);
         }
 
         // GET: Attendances/Details/5

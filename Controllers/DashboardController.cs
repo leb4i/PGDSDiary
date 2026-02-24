@@ -66,10 +66,10 @@ namespace GradingSystem.Controllers
             // Топ предмети
             var topSubjects = await _context.Grades
                 .Include(g => g.Subject)
-                .GroupBy(g => g.Subject!.Name)
-                .Select(g => new
-                {
-                    Subject = g.Key,
+                .GroupBy(g => new { g.Subject!.Name, g.Subject.ShortName })
+                .Select(g => new {
+                    Subject = g.Key.Name,
+                    ShortName = g.Key.ShortName,
                     Average = Math.Round(g.Average(x => (double)x.Value), 2)
                 })
                 .OrderByDescending(x => x.Average)

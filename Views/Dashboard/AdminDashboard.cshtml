@@ -156,7 +156,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
         const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
-                    ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (string)x.Subject).ToList()));
+                    ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (string)x.ShortName ?? (string)x.Subject).ToList()));
     const values = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
                 ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (double)x.Average).ToList()));
 
