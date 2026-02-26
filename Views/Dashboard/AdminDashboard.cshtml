@@ -5,7 +5,7 @@
 <!-- STAT КАРТИ -->
 <div class="stat-grid">
 
-    <div class="stat-card-new">
+    <a href="/Dashboard" class="stat-card-new" style="text-decoration:none;">
         <div class="stat-card-icon" style="background:#eef3fd;color:#2e6be6;">
             <i class="fas fa-chart-line"></i>
         </div>
@@ -14,9 +14,9 @@
             <div class="stat-card-label">Среден успех</div>
             <div class="stat-card-sub">за цялото училище</div>
         </div>
-    </div>
+    </a>
 
-    <div class="stat-card-new">
+    <a href="/Students" class="stat-card-new" style="text-decoration:none;">
         <div class="stat-card-icon" style="background:#e8f5ee;color:#2e7d50;">
             <i class="fas fa-user-graduate"></i>
         </div>
@@ -25,9 +25,9 @@
             <div class="stat-card-label">Ученици</div>
             <div class="stat-card-sub">активни в системата</div>
         </div>
-    </div>
+    </a>
 
-    <div class="stat-card-new">
+    <a href="/Grades" class="stat-card-new" style="text-decoration:none;">
         <div class="stat-card-icon" style="background:#fef9c3;color:#a16207;">
             <i class="fas fa-star"></i>
         </div>
@@ -36,9 +36,9 @@
             <div class="stat-card-label">Оценки</div>
             <div class="stat-card-sub">въведени тази година</div>
         </div>
-    </div>
+    </a>
 
-    <div class="stat-card-new">
+    <a href="/Attendances" class="stat-card-new" style="text-decoration:none;">
         <div class="stat-card-icon" style="background:#fee2e2;color:#e53e3e;">
             <i class="fas fa-calendar-xmark"></i>
         </div>
@@ -47,9 +47,9 @@
             <div class="stat-card-label">Отсъствия</div>
             <div class="stat-card-sub">неизвинени</div>
         </div>
-    </div>
+    </a>
 
-    <div class="stat-card-new">
+    <a href="/Attendances" class="stat-card-new" style="text-decoration:none;">
         <div class="stat-card-icon" style="background:#fff7ed;color:#c2410c;">
             <i class="fas fa-clock"></i>
         </div>
@@ -58,7 +58,8 @@
             <div class="stat-card-label">Закъснения</div>
             <div class="stat-card-sub">записани общо</div>
         </div>
-    </div>
+    </a>
+
 </div>
 
 <!-- СРЕДНА СЕКЦИЯ — графика + последни оценки -->
@@ -155,8 +156,10 @@
 @section Scripts {
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
     <script>
-        const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+    const labels = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
                     ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (string)x.ShortName ?? (string)x.Subject).ToList()));
+    const fullNames = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (string)x.Subject).ToList()));
     const values = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
                 ((IEnumerable<dynamic>)ViewBag.TopSubjects).Select(x => (double)x.Average).ToList()));
 
@@ -174,7 +177,20 @@
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: (items) => fullNames[items[0].dataIndex],
+                        label: (item) => ` Среден успех: ${item.raw}`
+                    },
+                    backgroundColor: '#1e2530',
+                    titleFont: { size: 13, weight: 'bold' },
+                    bodyFont: { size: 12 },
+                    padding: 10,
+                    cornerRadius: 8,
+                }
+            },
             scales: {
                 y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
                 x: { grid: { display: false } }

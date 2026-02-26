@@ -48,7 +48,7 @@ namespace GradingSystem.Controllers
         // GET: Teachers/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName");
             return View();
         }
 
@@ -82,7 +82,7 @@ namespace GradingSystem.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", teacher.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", teacher.UserId);
             return View(teacher);
         }
 
@@ -91,7 +91,7 @@ namespace GradingSystem.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,UserId")] Teacher teacher)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,UserName")] Teacher teacher)
         {
             if (id != teacher.Id)
             {
@@ -118,7 +118,7 @@ namespace GradingSystem.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", teacher.UserId);
+            ViewData["UserId"] = new SelectList(_context.Users, "Id", "UserName", teacher.UserId);
             return View(teacher);
         }
 

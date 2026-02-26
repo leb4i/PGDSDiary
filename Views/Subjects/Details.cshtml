@@ -1,24 +1,42 @@
 ﻿@model GradingSystem.Models.Subject
-
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Детайли за предмет";
 }
 
-<h1>Details</h1>
-
-<div>
-    <h4>Subject</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-    </dl>
+<div class="page-header">
+    <div>
+        <h1>Детайли за предмет</h1>
+        <p>Преглед на информацията</p>
+    </div>
+    <a asp-action="Index" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Назад
+    </a>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="card" style="max-width:500px;">
+    <div class="card-title">
+        <i class="fas fa-book-open" style="color:var(--accent);"></i>
+        Данни за предмета
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:24px;">
+        <div style="display:flex;gap:12px;align-items:center;">
+            <span style="font-weight:700;color:var(--text-muted);min-width:120px;">Наименование:</span>
+            <span style="font-weight:700;font-size:15px;">@Model.Name</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+            <span style="font-weight:700;color:var(--text-muted);min-width:120px;">Съкращение:</span>
+            <span class="badge badge-blue">@Model.ShortName</span>
+        </div>
+    </div>
+
+    <div style="display:flex;gap:10px;border-top:1px solid var(--border);padding-top:16px;">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+            <i class="fas fa-pen"></i> Редактирай
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">
+            <i class="fas fa-trash"></i> Изтрий
+        </a>
+        <a asp-action="Index" class="btn btn-outline">Назад</a>
+    </div>
 </div>
