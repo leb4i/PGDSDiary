@@ -1,0 +1,209 @@
+@{
+    ViewData["Title"] = "Моите статистики";
+    var student = ViewBag.Student;
+}
+
+<div class="page-header">
+    <div>
+        <h1>Моите статистики</h1>
+        <p>Детайлен анализ на твоя успех</p>
+    </div>
+</div>
+
+<!-- STAT КАРТИ -->
+<div class="stat-grid" style="grid-template-columns:repeat(3,1fr);max-width:780px;margin-bottom:20px;">
+    <div class="stat-card-new">
+        <div class="stat-card-icon" style="background:#eef3fd;color:#2e6be6;">
+            <i class="fas fa-ranking-star"></i>
+        </div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">@ViewBag.ClassPosition / @ViewBag.ClassTotal</div>
+            <div class="stat-card-label">Позиция в клас</div>
+            <div class="stat-card-sub">@student.Class?.Name</div>
+        </div>
+    </div>
+    <div class="stat-card-new">
+        <div class="stat-card-icon" style="background:#e8f5ee;color:#2e7d50;">
+            <i class="fas fa-book"></i>
+        </div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">@(((IEnumerable<dynamic>)ViewBag.SubjectAverages).Count())</div>
+            <div class="stat-card-label">Предмети</div>
+            <div class="stat-card-sub">с оценки</div>
+        </div>
+    </div>
+    <div class="stat-card-new">
+        <div class="stat-card-icon" style="background:#fee2e2;color:#e53e3e;">
+            <i class="fas fa-calendar-xmark"></i>
+        </div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">@(((IEnumerable<dynamic>)ViewBag.AbsencesBySubject).Sum(x => (int)x.count))</div>
+            <div class="stat-card-label">Отсъствия</div>
+            <div class="stat-card-sub">общо неизвинени</div>
+        </div>
+    </div>
+</div>
+
+<!-- РЕД 1: Динамика + Успех по предмет -->
+<div class="dashboard-grid" style="margin-bottom:20px;">
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chart-line" style="color:var(--accent);"></i>
+            Динамика на успеха
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-book" style="color:var(--accent);"></i>
+            Успех по предмет
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="subjectChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- РЕД 2: Таблица с предмети + Отсъствия -->
+<div class="dashboard-grid" style="margin-bottom:20px;">
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-star" style="color:#d97706;"></i>
+            Успех по предмет
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Оценки</th>
+                    <th>Среден</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var s in ViewBag.SubjectAverages)
+                {
+                    <tr>
+                        <td style="font-weight:600;">@s.name</td>
+                        <td style="color:var(--text-muted);">@s.count бр.</td>
+                        <td>
+                            @{
+                                string bc = s.average >= 5.5 ? "grade-6" : s.average >= 4.5 ? "grade-5" : s.average >= 3.5 ? "grade-4" : "grade-3";
+                            }
+                            <span class="grade-badge @bc">@s.average.ToString("F2")</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-calendar-xmark" style="color:#e53e3e;"></i>
+            Отсъствия по предмет
+        </div>
+        @if (!((IEnumerable<dynamic>)ViewBag.AbsencesBySubject).Any())
+        {
+            <div style="text-align:center;padding:32px;color:var(--text-muted);">
+                <i class="fas fa-check-circle" style="font-size:32px;color:#16a34a;margin-bottom:8px;display:block;"></i>
+                Нямаш отсъствия!
+            </div>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Предмет</th>
+                        <th>Отсъствия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var a in ViewBag.AbsencesBySubject)
+                    {
+                        <tr>
+                            <td style="font-weight:600;">@a.name</td>
+                            <td><span class="badge" style="background:#fee2e2;color:#b91c1c;">@a.count бр.</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+
+</div>
+
+@section Scripts {
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script>
+    const monthNames = ['Яну','Фев','Мар','Апр','Май','Юни','Юли','Авг','Сеп','Окт','Ное','Дек'];
+
+    // Динамика по месец
+    const trendData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        ((IEnumerable<dynamic>)ViewBag.GradesByMonth).Select(x => new { year = (int)x.year, month = (int)x.month, average = (double)x.average }).ToList()));
+
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: trendData.map(x => `${monthNames[x.month-1]} ${x.year}`),
+            datasets: [{
+                data: trendData.map(x => x.average),
+                borderColor: '#2e7d50',
+                backgroundColor: 'rgba(46,125,80,0.06)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#2e7d50',
+                pointRadius: 4,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+    // Успех по предмет
+    const subjData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        ((IEnumerable<dynamic>)ViewBag.SubjectAverages).Select(x => new { name = (string)x.name, shortName = (string)x.shortName, average = (double)x.average }).ToList()));
+
+    new Chart(document.getElementById('subjectChart'), {
+        type: 'bar',
+        data: {
+            labels: subjData.map(x => x.shortName),
+            datasets: [{
+                data: subjData.map(x => x.average),
+                backgroundColor: subjData.map((_, i) => `hsl(${210 + i * 15}, 65%, 55%)`),
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: (items) => subjData[items[0].dataIndex].name,
+                        label: (item) => ` Среден успех: ${item.raw}`
+                    }
+                }
+            },
+            scales: {
+                y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+</script>
+}

@@ -112,6 +112,24 @@ else
 
     </div>
 
+    <!-- УСПЕХ И ОТСЪСТВИЯ ПО ПРЕДМЕТ -->
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-title">
+            <i class="fas fa-star" style="color:#d97706;"></i>
+            Успех и отсъствия по предмет
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Предмет</th>
+                    <th>Оценки</th>
+                    <th>Среден успех</th>
+                    <th>Отсъствия</th>
+                </tr>
+            </thead>
+            <tbody id="subjectTableBody"></tbody>
+        </table>
+    </div>
 
 }
 @section Scripts {
@@ -149,6 +167,27 @@ else
                     x: { grid: { display: false } }
                 }
             }
+        });
+
+        const subjectData = @Html.Raw((string)ViewBag.SubjectAverages);
+        const absData2    = @Html.Raw((string)ViewBag.AbsencesBySubject);
+        const absMap      = {};
+        absData2.forEach(a => absMap[a.name] = a.count);
+
+        const tbody = document.getElementById('subjectTableBody');
+        subjectData.forEach(s => {
+            const abs    = absMap[s.name] || 0;
+            const grade  = s.average >= 5.5 ? 'grade-6' : s.average >= 4.5 ? 'grade-5' : s.average >= 3.5 ? 'grade-4' : 'grade-3';
+            const absBadge = abs > 0
+                ? `<span class="badge" style="background:#fee2e2;color:#b91c1c;">${abs} бр.</span>`
+                : `<span style="color:#16a34a;font-size:13px;"><i class="fas fa-check"></i></span>`;
+            tbody.innerHTML += `
+                <tr>
+                    <td style="font-weight:600;">${s.name}</td>
+                    <td style="color:var(--text-muted);">${s.count} бр.</td>
+                    <td><span class="grade-badge ${grade}">${s.average.toFixed(2)}</span></td>
+                    <td>${absBadge}</td>
+                </tr>`;
         });
     </script>
 }

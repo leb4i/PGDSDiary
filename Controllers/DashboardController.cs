@@ -228,7 +228,40 @@ namespace GradingSystem.Controllers
             ViewBag.TotalAbsences = await _context.Attendances
                 .CountAsync(a => a.StudentId == student.Id && a.Status == "Отсъства");
 
+            // Успех по предмет
+            var subjectAverages = myGrades
+            .GroupBy(g => new { g.Subject!.Name, g.Subject.ShortName })
+            .Select(g => new SubjectStat
+            {
+                Name = g.Key.Name,
+                ShortName = g.Key.ShortName ?? "",
+                Average = Math.Round(g.Average(x => (double)x.Value), 2),
+                Count = g.Count()
+            })
+                .OrderByDescending(x => x.Average)
+                .ToList();
+            ViewBag.SubjectAverages = subjectAverages;
+
+            // Отсъствия по предмет
+            var absencesBySubject = await _context.Attendances
+                .Include(a => a.Subject)
+                .Where(a => a.StudentId == student.Id && a.Status == "Отсъства")
+                .GroupBy(a => a.Subject!.Name)
+                .Select(g => new { name = g.Key, count = g.Count() })
+                .OrderByDescending(x => x.count)
+                .ToListAsync();
+            ViewBag.SubjectAverages = System.Text.Json.JsonSerializer.Serialize(subjectAverages);
+            ViewBag.AbsencesBySubject = System.Text.Json.JsonSerializer.Serialize(absencesBySubject);
+
             return View("StudentDashboard");
         }
+    }
+
+    public class SubjectStat
+    {
+        public string Name { get; set; } = "";
+        public string ShortName { get; set; } = "";
+        public double Average { get; set; }
+        public int Count { get; set; }
     }
 }

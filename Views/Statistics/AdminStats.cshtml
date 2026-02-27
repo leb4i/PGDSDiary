@@ -1,0 +1,283 @@
+@{
+    ViewData["Title"] = "Статистики";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Статистики</h1>
+        <p>Детайлен анализ на успеха и отсъствията</p>
+    </div>
+</div>
+
+<!-- РЕД 1: Успех по клас + Успех по предмет -->
+<div class="dashboard-grid" style="margin-bottom:20px;">
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chalkboard" style="color:var(--accent);"></i>
+            Среден успех по клас
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="classChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-book" style="color:var(--accent);"></i>
+            Среден успех по предмет
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="subjectChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- РЕД 2: Динамика по месец + Отсъствия по клас -->
+<div class="dashboard-grid" style="margin-bottom:20px;">
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-chart-line" style="color:var(--accent);"></i>
+            Динамика на успеха
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="trendChart"></canvas>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-calendar-xmark" style="color:#e53e3e;"></i>
+            Отсъствия по клас
+        </div>
+        <div class="chart-wrapper">
+            <canvas id="absenceChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- РЕД 3: Топ + Слаби ученици -->
+<div class="dashboard-grid" style="margin-bottom:20px;">
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-trophy" style="color:#d97706;"></i>
+            Топ 10 ученици
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ученик</th>
+                    <th>Клас</th>
+                    <th>Успех</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int rank = 1; }
+                @foreach (var s in ViewBag.TopStudents)
+                {
+                    string medalClass = rank == 1 ? "medal-gold" : rank == 2 ? "medal-silver" : rank == 3 ? "medal-bronze" : "medal-default";
+                    <tr>
+                        <td><div class="top10-rank @medalClass" style="width:28px;height:28px;font-size:12px;">@rank</div></td>
+                        <td style="font-weight:600;">@s.name</td>
+                        <td><span class="badge badge-green">@s.className</span></td>
+                        <td>
+                            @{
+                                string bc = s.average >= 5.5 ? "grade-6" : s.average >= 4.5 ? "grade-5" : s.average >= 3.5 ? "grade-4" : "grade-3";
+                            }
+                            <span class="grade-badge @bc">@s.average.ToString("F2")</span>
+                        </td>
+                    </tr>
+                    rank++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="card">
+        <div class="card-title">
+            <i class="fas fa-triangle-exclamation" style="color:#e53e3e;"></i>
+            Нуждаещи се от помощ
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Ученик</th>
+                    <th>Клас</th>
+                    <th>Успех</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{ int wrank = 1; }
+                @foreach (var s in ViewBag.WeakStudents)
+                {
+                    <tr>
+                        <td style="font-weight:700;color:var(--text-muted);">@wrank</td>
+                        <td style="font-weight:600;">@s.name</td>
+                        <td><span class="badge badge-green">@s.className</span></td>
+                        <td>
+                            @{
+                                string bc = s.average >= 5.5 ? "grade-6" : s.average >= 4.5 ? "grade-5" : s.average >= 3.5 ? "grade-4" : "grade-3";
+                            }
+                            <span class="grade-badge @bc">@s.average.ToString("F2")</span>
+                        </td>
+                    </tr>
+                    wrank++;
+                }
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <script>
+        const monthNames = ['Яну','Фев','Мар','Апр','Май','Юни','Юли','Авг','Сеп','Окт','Ное','Дек'];
+
+        // Успех по клас
+        const classData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        ((IEnumerable<dynamic>)ViewBag.ClassAverages).Select(x => new { name = (string)x.name, average = (double)x.average }).ToList()));
+
+        classData.sort((a, b) => {
+            const numA = parseInt(a.name), numB = parseInt(b.name);
+            if (numA !== numB) return numA - numB;
+            return a.name.localeCompare(b.name, 'bg');
+        });
+
+    const classColors = classData.map(x => {
+        if (x.name.endsWith('А')) return '#2e6be6';
+        if (x.name.endsWith('Б')) return '#2e7d50';
+        if (x.name.endsWith('В')) return '#d97706';
+        if (x.name.endsWith('Г')) return '#7c3aed';
+        if (x.name.endsWith('Д')) return '#e53e3e';
+        return '#94a3b8';
+    });
+
+        new Chart(document.getElementById('classChart'), {
+            type: 'bar',
+            data: {
+                labels: classData.map(x => x.name),
+                datasets: [{
+                    data: classData.map(x => x.average),
+                    backgroundColor: classColors,
+                    borderRadius: 6,
+                    borderSkipped: false,
+                }]
+            },
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                    x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+                }
+            }
+        });
+
+        // Успех по предмет
+        const subjData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                ((IEnumerable<dynamic>)ViewBag.SubjectAverages).Take(8).Select(x => new { name = (string)x.name, shortName = (string)x.shortName, average = (double)x.average }).ToList()));
+
+    new Chart(document.getElementById('subjectChart'), {
+        type: 'bar',
+        data: {
+            labels: subjData.map(x => x.shortName),
+            datasets: [{
+                data: subjData.map(x => x.average),
+                backgroundColor: ['#2e6be6','#2e7d50','#d97706','#e53e3e','#7c3aed','#0891b2','#be185d','#065f46'],
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        title: (items) => subjData[items[0].dataIndex].name,
+                        label: (item) => ` Среден успех: ${item.raw}`
+                    }
+                }
+            },
+            scales: {
+                y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+        // Динамика по месец
+        const trendData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+                ((IEnumerable<dynamic>)ViewBag.GradesByMonth).Select(x => new { year = (int)x.year, month = (int)x.month, average = (double)x.average }).ToList()));
+
+    new Chart(document.getElementById('trendChart'), {
+        type: 'line',
+        data: {
+            labels: trendData.map(x => `${monthNames[x.month-1]} ${x.year}`),
+            datasets: [{
+                data: trendData.map(x => x.average),
+                borderColor: '#2e6be6',
+                backgroundColor: 'rgba(46,107,230,0.06)',
+                borderWidth: 2.5,
+                pointBackgroundColor: '#2e6be6',
+                pointRadius: 4,
+                tension: 0.4,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { min: 2, max: 6, ticks: { stepSize: 1 }, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false } }
+            }
+        }
+    });
+
+        // Отсъствия по клас
+        const absData = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(
+        ((IEnumerable<dynamic>)ViewBag.AbsencesByClass).Select(x => new { name = (string)x.name, count = (int)x.count }).ToList()));
+
+        absData.sort((a, b) => {
+            const numA = parseInt(a.name), numB = parseInt(b.name);
+            if (numA !== numB) return numA - numB;
+            return a.name.localeCompare(b.name, 'bg');
+        });
+
+    new Chart(document.getElementById('absenceChart'), {
+        type: 'bar',
+        data: {
+            labels: absData.map(x => x.name),
+            datasets: [{
+                data: absData.map(x => x.count),
+                backgroundColor: absData.map(x => {
+                    if (x.name.endsWith('А')) return '#2e6be6';
+                    if (x.name.endsWith('Б')) return '#2e7d50';
+                    if (x.name.endsWith('В')) return '#d97706';
+                    if (x.name.endsWith('Г')) return '#7c3aed';
+                    if (x.name.endsWith('Д')) return '#e53e3e';
+                    return '#94a3b8';
+                }),
+                borderRadius: 6,
+                borderSkipped: false,
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, grid: { color: '#f1f5f9' } },
+                x: { grid: { display: false }, ticks: { font: { size: 10 } } }
+            }
+        }
+    });
+</script>
+}

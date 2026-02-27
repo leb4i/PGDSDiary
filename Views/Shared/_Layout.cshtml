@@ -56,6 +56,10 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
                     <i class="fas fa-clock"></i> Разписание
                 </a>
+                <div class="sidebar-section">Анализи</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Statistics" ? "active" : "")" href="/Statistics">
+                    <i class="fas fa-chart-pie"></i> Статистики
+                </a>
             }
             else if (User.IsInRole("Teacher"))
             {
@@ -71,6 +75,9 @@
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
                     <i class="fas fa-clock"></i> Разписание
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Statistics" ? "active" : "")" href="/Statistics">
+                    <i class="fas fa-chart-pie"></i> Статистики
                 </a>
             }
             else if (User.IsInRole("Student"))
@@ -96,14 +103,21 @@
     <!-- MAIN -->
     <div class="main-wrapper">
         <header class="topbar">
-            <div></div>
+            <!-- ТЪРСАЧКА -->
+            <div class="search-wrapper">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" id="globalSearch" class="search-input" placeholder="Търси ученик, учител, предмет..." autocomplete="off" />
+                </div>
+                <div class="search-dropdown" id="searchDropdown"></div>
+            </div>
+
             <div class="topbar-right">
                 <div class="topbar-user">
                     <div class="topbar-avatar">
                         @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?")
                     </div>
                 </div>
-
                 <form method="post" action="/Account/Logout">
                     @Html.AntiForgeryToken()
                     <button type="submit" class="btn-logout">
@@ -117,6 +131,65 @@
             @RenderBody()
         </main>
     </div>
+
+    <script>
+        const searchInput = document.getElementById('globalSearch');
+        const dropdown    = document.getElementById('searchDropdown');
+        let searchTimer;
+
+        searchInput.addEventListener('input', () => {
+            clearTimeout(searchTimer);
+            const q = searchInput.value.trim();
+            if (q.length < 2) { dropdown.style.display = 'none'; return; }
+
+            searchTimer = setTimeout(async () => {
+                const res  = await fetch(`/Search/Live?q=${encodeURIComponent(q)}`);
+                const data = await res.json();
+
+                if (!data.total) {
+                    dropdown.innerHTML = '<div class="search-empty">Няма резултати</div>';
+                    dropdown.style.display = 'block';
+                    return;
+                }
+
+                let html = '';
+                if (data.students?.length) {
+                    html += `<div class="search-group-title"><i class="fas fa-user-graduate"></i> Ученици</div>`;
+                    data.students.forEach(s => {
+                        html += `<a class="search-item" href="/Students/Details/${s.id}">
+                            <span class="search-item-name">${s.name}</span>
+                            <span class="search-item-sub">${s.className}</span>
+                        </a>`;
+                    });
+                }
+                if (data.teachers?.length) {
+                    html += `<div class="search-group-title"><i class="fas fa-chalkboard-user"></i> Учители</div>`;
+                    data.teachers.forEach(t => {
+                        html += `<a class="search-item" href="/Teachers/Details/${t.id}">
+                            <span class="search-item-name">${t.name}</span>
+                        </a>`;
+                    });
+                }
+                if (data.subjects?.length) {
+                    html += `<div class="search-group-title"><i class="fas fa-book"></i> Предмети</div>`;
+                    data.subjects.forEach(s => {
+                        html += `<a class="search-item" href="/Subjects/Details/${s.id}">
+                            <span class="search-item-name">${s.name}</span>
+                            <span class="search-item-sub">${s.shortName}</span>
+                        </a>`;
+                    });
+                }
+
+                dropdown.innerHTML = html;
+                dropdown.style.display = 'block';
+            }, 250);
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.search-wrapper'))
+                dropdown.style.display = 'none';
+        });
+    </script>
 
     @RenderSection("Scripts", required: false)
 </body>
