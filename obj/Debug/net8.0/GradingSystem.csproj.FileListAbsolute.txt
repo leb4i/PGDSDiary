@@ -261,3 +261,4 @@ C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\refint\GradingSystem.
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\GradingSystem.pdb
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\GradingSystem.genruntimeconfig.cache
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\ref\GradingSystem.dll
+C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\swae.build.ex.cache

@@ -66,11 +66,14 @@ namespace GradingSystem.Controllers
                     .OrderByDescending(g => g.GradedAt)
                     .ToListAsync();
 
-                ViewBag.MyClasses = await _context.Classes
+                var myClasses = await _context.Classes
                     .Where(c => myClassIds.Contains(c.Id))
+                    .ToListAsync();
+
+                ViewBag.MyClasses = myClasses
                     .OrderBy(c => int.Parse(string.Concat(c.Name.TakeWhile(char.IsDigit))))
                     .ThenBy(c => c.Name)
-                    .ToListAsync();
+                    .ToList();
 
                 ViewBag.SelectedClassId = classId;
                 return View(grades);

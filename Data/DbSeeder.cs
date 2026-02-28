@@ -416,13 +416,13 @@ namespace GradingSystem.Data
             var days = new[] { "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък" };
             var times = new (TimeOnly Start, TimeOnly End)[]
             {
-    (new TimeOnly(7,  30), new TimeOnly(8,  15)),
-    (new TimeOnly(8,  20), new TimeOnly(9,   5)),
-    (new TimeOnly(9,  15), new TimeOnly(10,  0)),
-    (new TimeOnly(10, 10), new TimeOnly(10, 55)),
-    (new TimeOnly(11,  5), new TimeOnly(11, 50)),
-    (new TimeOnly(12,  0), new TimeOnly(12, 45)),
-    (new TimeOnly(12, 55), new TimeOnly(13, 40)),
+                (new TimeOnly(7,  30), new TimeOnly(8,  15)),
+                (new TimeOnly(8,  20), new TimeOnly(9,   5)),
+                (new TimeOnly(9,  15), new TimeOnly(10,  0)),
+                (new TimeOnly(10, 10), new TimeOnly(10, 55)),
+                (new TimeOnly(11,  5), new TimeOnly(11, 50)),
+                (new TimeOnly(12,  0), new TimeOnly(12, 45)),
+                (new TimeOnly(12, 55), new TimeOnly(13, 40)),
             };
 
             var teacherUsed = teachers.ToDictionary(t => t.Id, _ => new HashSet<(int, int)>());
@@ -439,38 +439,37 @@ namespace GradingSystem.Data
                 int sCount = csForClass.Count;
                 if (sCount == 0) continue;
 
-                // Колко повторения на предмет (разпределяме 35 слота)
-                int repeats = Math.Max(1, totalSlots / sCount);
+                int repeats = Math.Max(4, totalSlots / sCount);
                 var allSlots = new List<(int subjectId, int teacherId)>();
 
                 foreach (var cs in csForClass)
                     for (int r = 0; r < repeats; r++)
                         allSlots.Add((cs.SubjectId, cs.TeacherId.Value));
 
-                // Разбъркваме
-                allSlots = allSlots.OrderBy(_ => Guid.NewGuid()).ToList();
+                // Ограничаваме до точно 35 слота
+                allSlots = allSlots.Take(totalSlots).OrderBy(_ => Guid.NewGuid()).ToList();
 
-                foreach (var (subjectId, teacherId) in allSlots)
+                var rngSchedule = new Random(c.Id); // фиксиран seed по клас
+                var allDayPeriods = (
+                    from d in Enumerable.Range(0, 5)
+                    from p in Enumerable.Range(0, 7)
+                    select (d, p)
+                ).OrderBy(_ => rngSchedule.Next()).ToList();
+
+                int slotIndex = 0;
+                foreach (var (d, p) in allDayPeriods)
                 {
-                    bool placed = false;
-                    for (int d = 0; d < 5 && !placed; d++)
-                        for (int p = 0; p < 7 && !placed; p++)
-                            if (!teacherUsed[teacherId].Contains((d, p)) &&
-                                !classUsed[c.Id].Contains((d, p)))
-                            {
-                                scheduleSlots.Add(new ScheduleSlot
-                                {
-                                    ClassId = c.Id,
-                                    SubjectId = subjectId,
-                                    DayOfWeek = days[d],
-                                    PeriodNumber = p + 1,
-                                    StartTime = times[p].Start,
-                                    EndTime = times[p].End
-                                });
-                                teacherUsed[teacherId].Add((d, p));
-                                classUsed[c.Id].Add((d, p));
-                                placed = true;
-                            }
+                    if (slotIndex >= allSlots.Count) break;
+                    var (subjectId, _) = allSlots[slotIndex++];
+                    scheduleSlots.Add(new ScheduleSlot
+                    {
+                        ClassId = c.Id,
+                        SubjectId = subjectId,
+                        DayOfWeek = days[d],
+                        PeriodNumber = p + 1,
+                        StartTime = times[p].Start,
+                        EndTime = times[p].End
+                    });
                 }
             }
             context.ScheduleSlots.AddRange(scheduleSlots);
