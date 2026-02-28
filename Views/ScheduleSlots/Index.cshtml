@@ -24,6 +24,31 @@
     </a>
 </div>
 
+@if (!User.IsInRole("Student"))
+{
+<!-- ФИЛТЪР -->
+<div class="card" style="margin-bottom:20px;padding:16px;">
+    <form method="get" style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <label class="form-label" style="margin:0;font-weight:700;">Клас:</label>
+        <select name="classId" class="form-control" style="width:120px;" onchange="this.form.submit()">
+            <option value="">Всички</option>
+            @if (ViewBag.Classes != null)
+            {
+                @foreach (var c in ViewBag.Classes)
+                {
+                    <option value="@c.Id" selected="@(ViewBag.SelectedClass == c.Id)"> @c.Name </option>
+                }
+            }
+        </select>
+        @if (ViewBag.SelectedClass != null)
+        {
+            <a href="/ScheduleSlots" class="btn btn-outline">
+                <i class="fas fa-times"></i> Изчисти
+            </a>
+        }
+    </form>
+</div>
+}
 <!-- Навигация седмица -->
 <div class="week-nav">
     <button class="btn btn-outline" id="prevWeek">

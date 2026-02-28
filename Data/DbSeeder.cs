@@ -416,42 +416,62 @@ namespace GradingSystem.Data
             var days = new[] { "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък" };
             var times = new (TimeOnly Start, TimeOnly End)[]
             {
-                (new TimeOnly(8,   0), new TimeOnly(8,  45)),
-                (new TimeOnly(8,  55), new TimeOnly(9,  40)),
-                (new TimeOnly(10,  0), new TimeOnly(10, 45)),
-                (new TimeOnly(10, 55), new TimeOnly(11, 40)),
-                (new TimeOnly(11, 50), new TimeOnly(12, 35)),
-                (new TimeOnly(12, 45), new TimeOnly(13, 30)),
-                (new TimeOnly(13, 40), new TimeOnly(14, 25))
+    (new TimeOnly(7,  30), new TimeOnly(8,  15)),
+    (new TimeOnly(8,  20), new TimeOnly(9,   5)),
+    (new TimeOnly(9,  15), new TimeOnly(10,  0)),
+    (new TimeOnly(10, 10), new TimeOnly(10, 55)),
+    (new TimeOnly(11,  5), new TimeOnly(11, 50)),
+    (new TimeOnly(12,  0), new TimeOnly(12, 45)),
+    (new TimeOnly(12, 55), new TimeOnly(13, 40)),
             };
 
             var teacherUsed = teachers.ToDictionary(t => t.Id, _ => new HashSet<(int, int)>());
             var classUsed = classes.ToDictionary(c => c.Id, _ => new HashSet<(int, int)>());
             var scheduleSlots = new List<ScheduleSlot>();
 
-            foreach (var cs in classSubjects)
-            {
-                var teacher = subjectTeacher[subjects.First(s => s.Id == cs.SubjectId).Name];
-                bool placed = false;
+            // Колко пъти седмично да се повтаря всеки предмет
+            int totalSlots = 5 * 7; // 35 слота на седмица на клас
+            int subjectsCount(int classId) => classSubjects.Count(cs => cs.ClassId == classId);
 
-                for (int d = 0; d < 5 && !placed; d++)
-                    for (int p = 0; p < 7 && !placed; p++)
-                        if (!teacherUsed[teacher.Id].Contains((d, p)) &&
-                            !classUsed[cs.ClassId].Contains((d, p)))
-                        {
-                            scheduleSlots.Add(new ScheduleSlot
+            foreach (var c in classes)
+            {
+                var csForClass = classSubjects.Where(cs => cs.ClassId == c.Id).ToList();
+                int sCount = csForClass.Count;
+                if (sCount == 0) continue;
+
+                // Колко повторения на предмет (разпределяме 35 слота)
+                int repeats = Math.Max(1, totalSlots / sCount);
+                var allSlots = new List<(int subjectId, int teacherId)>();
+
+                foreach (var cs in csForClass)
+                    for (int r = 0; r < repeats; r++)
+                        allSlots.Add((cs.SubjectId, cs.TeacherId.Value));
+
+                // Разбъркваме
+                allSlots = allSlots.OrderBy(_ => Guid.NewGuid()).ToList();
+
+                foreach (var (subjectId, teacherId) in allSlots)
+                {
+                    bool placed = false;
+                    for (int d = 0; d < 5 && !placed; d++)
+                        for (int p = 0; p < 7 && !placed; p++)
+                            if (!teacherUsed[teacherId].Contains((d, p)) &&
+                                !classUsed[c.Id].Contains((d, p)))
                             {
-                                ClassId = cs.ClassId,
-                                SubjectId = cs.SubjectId,
-                                DayOfWeek = days[d],
-                                PeriodNumber = p + 1,
-                                StartTime = times[p].Start,
-                                EndTime = times[p].End
-                            });
-                            teacherUsed[teacher.Id].Add((d, p));
-                            classUsed[cs.ClassId].Add((d, p));
-                            placed = true;
-                        }
+                                scheduleSlots.Add(new ScheduleSlot
+                                {
+                                    ClassId = c.Id,
+                                    SubjectId = subjectId,
+                                    DayOfWeek = days[d],
+                                    PeriodNumber = p + 1,
+                                    StartTime = times[p].Start,
+                                    EndTime = times[p].End
+                                });
+                                teacherUsed[teacherId].Add((d, p));
+                                classUsed[c.Id].Add((d, p));
+                                placed = true;
+                            }
+                }
             }
             context.ScheduleSlots.AddRange(scheduleSlots);
             context.SaveChanges();

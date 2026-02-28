@@ -23,16 +23,16 @@ namespace GradingSystem.Controllers
         }
 
         // GET: ScheduleSlots
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? classId, int? teacherId)
         {
+            var user = await _userManager.GetUserAsync(User);
+
             if (User.IsInRole("Student"))
             {
-                var user = await _userManager.GetUserAsync(User);
                 var student = await _context.Students
                     .FirstOrDefaultAsync(s => s.Id == user!.StudentId);
 
-                if (student == null)
-                    return View(new List<ScheduleSlot>());
+                if (student == null) return View(new List<ScheduleSlot>());
 
                 var slots = await _context.ScheduleSlots
                     .Include(s => s.Class)
@@ -43,11 +43,58 @@ namespace GradingSystem.Controllers
                 return View(slots);
             }
 
-            // Admin и Teacher виждат всичко
-            var allSlots = await _context.ScheduleSlots
+            if (User.IsInRole("Teacher"))
+            {
+                var teacher = await _context.Teachers
+                    .FirstOrDefaultAsync(t => t.UserId == user!.Id);
+
+                if (teacher == null) return View(new List<ScheduleSlot>());
+
+                var mySubjectIds = await _context.ClassSubjects
+                    .Where(cs => cs.TeacherId == teacher.Id)
+                    .Select(cs => cs.SubjectId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var myClassIds = await _context.ClassSubjects
+                    .Where(cs => cs.TeacherId == teacher.Id)
+                    .Select(cs => cs.ClassId)
+                    .Distinct()
+                    .ToListAsync();
+
+                var slots = await _context.ScheduleSlots
+                    .Include(s => s.Class)
+                    .Include(s => s.Subject)
+                    .Where(s => mySubjectIds.Contains(s.SubjectId) && myClassIds.Contains(s.ClassId))
+                    .ToListAsync();
+
+                // Филтър по клас ако е избран
+                if (classId.HasValue)
+                    slots = slots.Where(s => s.ClassId == classId.Value).ToList();
+
+                ViewBag.Classes = await _context.Classes
+                    .Where(c => myClassIds.Contains(c.Id))
+                    .OrderBy(c => c.Name).ToListAsync();
+                ViewBag.SelectedClass = classId;
+
+                return View(slots);
+            }
+
+            // Admin
+            var query = _context.ScheduleSlots
                 .Include(s => s.Class)
                 .Include(s => s.Subject)
+                .AsQueryable();
+
+            if (classId.HasValue)
+                query = query.Where(s => s.ClassId == classId.Value);
+
+            var allSlots = await query.ToListAsync();
+
+            ViewBag.Classes = await _context.Classes
+                .OrderBy(c => c.Name)
                 .ToListAsync();
+            ViewBag.SelectedClass = classId;
 
             return View(allSlots);
         }
