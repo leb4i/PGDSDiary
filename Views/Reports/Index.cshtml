@@ -1,0 +1,224 @@
+﻿@{
+    ViewData["Title"] = "Справки";
+}
+
+<div class="page-header">
+    <div>
+        <h1>Справки и отчети</h1>
+        <p>Генерирай PDF справки по период и клас</p>
+    </div>
+</div>
+
+<!-- ФИЛТРИ -->
+<div class="card" style="margin-bottom:20px;">
+    <div class="card-title">
+        <i class="fas fa-filter" style="color:var(--accent);"></i>
+        Филтри
+    </div>
+    <form method="get" style="display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;">
+        <div class="form-group" style="margin:0;">
+            <label class="form-label">Клас</label>
+            <select name="classId" class="form-control" style="width:120px;">
+                <option value="">-- Избери --</option>
+                @if (ViewBag.Classes != null)
+                {
+                    @foreach (var c in ViewBag.Classes)
+                    {
+                        int cId = c.Id;
+                        bool isSelected = ViewBag.Selected != null && (int)ViewBag.Selected == cId;
+                        if (isSelected)
+                        {
+                            <option value="@cId" selected>@c.Name</option>
+                        }
+                        else
+                        {
+                            <option value="@cId">@c.Name</option>
+                        }
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="form-group" style="margin:0;">
+            <label class="form-label">От дата</label>
+            <input type="date" name="from" class="form-control" value="@ViewBag.From" style="width:150px;" />
+        </div>
+
+        <div class="form-group" style="margin:0;">
+            <label class="form-label">До дата</label>
+            <input type="date" name="to" class="form-control" value="@ViewBag.To" style="width:150px;" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Покажи
+        </button>
+
+        @if (ViewBag.Selected != null)
+        {
+            <a href="/Reports?classId=@ViewBag.Selected&from=@ViewBag.From&to=@ViewBag.To" 
+               class="btn btn-outline" style="background:#16a34a;color:white;border-color:#16a34a;"
+               onclick="this.href='/Reports/GeneratePdf?classId=@ViewBag.Selected&from=@ViewBag.From&to=@ViewBag.To'; return true;">
+                <i class="fas fa-file-pdf"></i> Генерирай PDF
+            </a>
+        }
+    </form>
+</div>
+
+@if (ViewBag.SelectedClass != null)
+{
+    <!-- ОБОБЩЕНИЕ -->
+    <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);max-width:780px;margin-bottom:20px;">
+        <div class="stat-card-new">
+            <div class="stat-card-icon" style="background:#eef3fd;color:#2e6be6;">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-card-value">@ViewBag.TotalStudents</div>
+                <div class="stat-card-label">Ученици</div>
+                <div class="stat-card-sub">клас @ViewBag.SelectedClass.Name</div>
+            </div>
+        </div>
+        <div class="stat-card-new">
+            <div class="stat-card-icon" style="background:#e8f5ee;color:#2e7d50;">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-card-value">@ViewBag.ClassAvg</div>
+                <div class="stat-card-label">Среден успех</div>
+                <div class="stat-card-sub">за периода</div>
+            </div>
+        </div>
+        <div class="stat-card-new">
+            <div class="stat-card-icon" style="background:#fee2e2;color:#e53e3e;">
+                <i class="fas fa-calendar-xmark"></i>
+            </div>
+            <div class="stat-card-body">
+                <div class="stat-card-value">@ViewBag.TotalAbsences</div>
+                <div class="stat-card-label">Отсъствия</div>
+                <div class="stat-card-sub">за периода</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-grid" style="margin-bottom:20px;">
+
+        <!-- УСПЕХ ПО ПРЕДМЕТ -->
+        <div class="card">
+            <div class="card-title">
+                <i class="fas fa-book" style="color:var(--accent);"></i>
+                Успех по предмет
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Предмет</th>
+                        <th>Среден</th>
+                        <th>Оценки</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var s in ViewBag.SubjectStats)
+                    {
+                        <tr>
+                            <td style="font-weight:600;">@s.Subject</td>
+                            <td>
+                                @{
+                                    string bc = s.Average >= 5.5 ? "grade-6" : s.Average >= 4.5 ? "grade-5" : s.Average >= 3.5 ? "grade-4" : "grade-3";
+                                }
+                                <span class="grade-badge @bc">@s.Average.ToString("F2")</span>
+                            </td>
+                            <td style="color:var(--text-muted);">@s.Count бр.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ТОП УЧЕНИЦИ + ОТСЪСТВИЯ -->
+        <div style="display:flex;flex-direction:column;gap:20px;">
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-trophy" style="color:#d97706;"></i>
+                    Топ 5 ученици
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ученик</th>
+                            <th>Среден</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{ int rank = 1; }
+                        @foreach (var s in ViewBag.TopStudents)
+                        {
+                            string medalClass = rank == 1 ? "medal-gold" : rank == 2 ? "medal-silver" : rank == 3 ? "medal-bronze" : "medal-default";
+                            <tr>
+                                <td><div class="top10-rank @medalClass" style="width:28px;height:28px;font-size:12px;">@rank</div></td>
+                                <td style="font-weight:600;">@s.Name</td>
+                                <td>
+                                    @{
+                                        string bc = s.Average >= 5.5 ? "grade-6" : s.Average >= 4.5 ? "grade-5" : s.Average >= 3.5 ? "grade-4" : "grade-3";
+                                    }
+                                    <span class="grade-badge @bc">@s.Average.ToString("F2")</span>
+                                </td>
+                            </tr>
+                            rank++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="card">
+                <div class="card-title">
+                    <i class="fas fa-calendar-xmark" style="color:#e53e3e;"></i>
+                    Отсъствия по ученик
+                </div>
+                @if (!((IEnumerable<dynamic>)ViewBag.AbsenceStats).Any())
+                {
+                    <div style="text-align:center;padding:24px;color:var(--text-muted);">
+                        <i class="fas fa-check-circle" style="font-size:24px;color:#16a34a;margin-bottom:6px;display:block;"></i>
+                        Няма отсъствия за периода
+                    </div>
+                }
+                else
+                {
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Ученик</th>
+                                <th>Отсъствия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var a in ViewBag.AbsenceStats)
+                            {
+                                <tr>
+                                    <td style="font-weight:600;">@a.Name</td>
+                                    <td><span class="badge" style="background:#fee2e2;color:#b91c1c;">@a.Count бр.</span></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PDF БУТОН -->
+   /* <div style="display:flex;justify-content:flex-end;margin-bottom:20px;">
+        <a href="/Reports/GeneratePdf?classId=@ViewBag.SelectedClass.Id&from=@ViewBag.From&to=@ViewBag.To"
+           class="btn btn-primary" style="background:#16a34a;border-color:#16a34a;">
+            <i class="fas fa-file-pdf"></i> Генерирай PDF справка
+        </a>
+    </div>*/
+}
+else
+{
+    <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);">
+        <i class="fas fa-file-chart-column" style="font-size:48px;margin-bottom:12px;display:block;color:#cbd5e1;"></i>
+        <p style="font-size:16px;font-weight:600;">Избери клас и период за да видиш справката</p>
+    </div>
+}

@@ -60,6 +60,9 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Statistics" ? "active" : "")" href="/Statistics">
                     <i class="fas fa-chart-pie"></i> Статистики
                 </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
+                    <i class="fas fa-file-chart-column"></i> Справки
+                </a>
             }
             else if (User.IsInRole("Teacher"))
             {
@@ -78,6 +81,9 @@
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Statistics" ? "active" : "")" href="/Statistics">
                     <i class="fas fa-chart-pie"></i> Статистики
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
+                    <i class="fas fa-file-chart-column"></i> Справки
                 </a>
             }
             else if (User.IsInRole("Student"))

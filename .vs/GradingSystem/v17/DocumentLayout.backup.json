@@ -3,20 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\controllers\\gradescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\gradescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\views\\reports\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\reports\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\controllers\\statisticscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\statisticscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:data\\dbseeder.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:wwwroot\\css\\site.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\gradingsystem\\controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\reportscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -26,60 +18,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 6,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "GradesController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\GradesController.cs",
-              "RelativeDocumentMoniker": "Controllers\\GradesController.cs",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\GradesController.cs",
-              "RelativeToolTip": "Controllers\\GradesController.cs",
-              "ViewState": "AgIAADYAAAAAAAAAAAAAAFQAAAAkAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-28T17:12:28.338Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "StatisticsController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\StatisticsController.cs",
-              "RelativeDocumentMoniker": "Controllers\\StatisticsController.cs",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\StatisticsController.cs",
-              "RelativeToolTip": "Controllers\\StatisticsController.cs",
-              "ViewState": "AgIAAAMBAAAAAAAAAAAAACcBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-28T17:10:28.573Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "site.css",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\wwwroot\\css\\site.css",
-              "RelativeDocumentMoniker": "wwwroot\\css\\site.css",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\wwwroot\\css\\site.css",
-              "RelativeToolTip": "wwwroot\\css\\site.css",
-              "ViewState": "AgIAAJMCAAAAAAAAAAAawKgCAAAeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-02-28T16:51:22.357Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DbSeeder.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Data\\DbSeeder.cs",
-              "RelativeDocumentMoniker": "Data\\DbSeeder.cs",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Data\\DbSeeder.cs",
-              "RelativeToolTip": "Data\\DbSeeder.cs",
-              "ViewState": "AgIAAKkBAAAAAAAAAAAAALwBAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-02-28T16:44:39.171Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{40ea2e6b-2121-4bb8-a43e-c83c04b51041}"
@@ -103,6 +43,31 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{34e76e81-ee4a-11d0-ae2e-00a0c90fffc3}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Reports\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Reports\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Views\\Reports\\Index.cshtml",
+              "RelativeToolTip": "Views\\Reports\\Index.cshtml",
+              "ViewState": "AgIAALUAAAAAAAAAAAAhwNkAAAAEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-02-28T17:27:32.902Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "ReportsController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\ReportsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ReportsController.cs",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\GradingSystem\\Controllers\\ReportsController.cs",
+              "RelativeToolTip": "Controllers\\ReportsController.cs",
+              "ViewState": "AgIAAHgAAAAAAAAAAAAAACwAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-28T17:26:23.008Z"
             }
           ]
         },
