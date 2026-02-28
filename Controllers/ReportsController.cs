@@ -116,6 +116,25 @@ namespace GradingSystem.Controllers
                 .OrderByDescending(s => s.Count)
                 .ToList();
 
+            var lates = await _context.Attendances
+                .Where(a => a.Student!.ClassId == classId &&
+                a.Status == "Закъснял" &&
+                a.Date >= DateOnly.FromDateTime(fromDate) &&
+                a.Date <= DateOnly.FromDateTime(toDate))
+                .ToListAsync();
+
+            var lateStats = students
+                .Select(s => new {
+                    Name = s.FirstName + " " + s.LastName,
+                    Count = lates.Count(a => a.StudentId == s.Id)
+                })
+                .Where(s => s.Count > 0)
+                .OrderByDescending(s => s.Count)
+                .ToList();
+
+            ViewBag.TotalLates = lates.Count;
+            ViewBag.LateStats = lateStats;
+
             ViewBag.SelectedClass = selectedClass;
             ViewBag.ClassAvg = classAvg;
             ViewBag.TopStudents = topStudents;
@@ -178,6 +197,22 @@ namespace GradingSystem.Controllers
                 .Select(s => new {
                     Name = s.FirstName + " " + s.LastName,
                     Count = absences.Count(a => a.StudentId == s.Id)
+                })
+                .Where(s => s.Count > 0)
+                .OrderByDescending(s => s.Count)
+                .ToList();
+
+            var lates = await _context.Attendances
+                .Where(a => a.Student!.ClassId == classId &&
+                a.Status == "Закъснял" &&
+                a.Date >= DateOnly.FromDateTime(from) &&
+                a.Date <= DateOnly.FromDateTime(to))
+                .ToListAsync();
+
+            var lateStats = students
+                .Select(s => new {
+                    Name = s.FirstName + " " + s.LastName,
+                    Count = lates.Count(a => a.StudentId == s.Id)
                 })
                 .Where(s => s.Count > 0)
                 .OrderByDescending(s => s.Count)
@@ -322,6 +357,39 @@ namespace GradingSystem.Controllers
                                 foreach (var a in absenceStats)
                                 {
                                     var bg = alt ? Color.FromHex("#fff5f5") : Colors.White;
+                                    table.Cell().Background(bg).Padding(5).Text(a.Name);
+                                    table.Cell().Background(bg).Padding(5).Text(a.Count.ToString()).Bold();
+                                    alt = !alt;
+                                }
+                            });
+                        }
+
+                        if (lateStats.Any())
+                        {
+                            col.Item().PaddingTop(14).Text("Закъснения по ученик")
+                                .FontSize(12).Bold().FontColor(Color.FromHex("#1e2530"));
+                            col.Item().PaddingTop(4);
+
+                            col.Item().Table(table =>
+                            {
+                                table.ColumnsDefinition(cols =>
+                                {
+                                    cols.RelativeColumn(3);
+                                    cols.RelativeColumn(1);
+                                });
+
+                                table.Header(h =>
+                                {
+                                    h.Cell().Background(Color.FromHex("#a16207")).Padding(5)
+                                        .Text("Ученик").Bold().FontColor(Colors.White);
+                                    h.Cell().Background(Color.FromHex("#a16207")).Padding(5)
+                                        .Text("Закъснения").Bold().FontColor(Colors.White);
+                                });
+
+                                bool alt = false;
+                                foreach (var a in lateStats)
+                                {
+                                    var bg = alt ? Color.FromHex("#fefce8") : Colors.White;
                                     table.Cell().Background(bg).Padding(5).Text(a.Name);
                                     table.Cell().Background(bg).Padding(5).Text(a.Count.ToString()).Bold();
                                     alt = !alt;
