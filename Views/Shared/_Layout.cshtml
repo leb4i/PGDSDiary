@@ -128,6 +128,14 @@
             </div>
 
             <div class="topbar-right">
+                <!-- НОТИФИКАЦИИ -->
+                <div style="position:relative;">
+                    <a href="/Messages" style="text-decoration:none;color:var(--text-muted);padding:8px;display:flex;align-items:center;font-size:18px;">
+                        <i class="fas fa-bell"></i>
+                        <span id="notifBadge" style="display:none;position:absolute;top:2px;right:2px;background:#e53e3e;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;font-weight:800;align-items:center;justify-content:center;"></span>
+                    </a>
+                </div>
+
                 <div class="topbar-user">
                     <div class="topbar-avatar">
                         @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?")
@@ -204,6 +212,24 @@
             if (!e.target.closest('.search-wrapper'))
                 dropdown.style.display = 'none';
         });
+
+                // Нотификации
+        async function checkNotifications() {
+            try {
+                const res = await fetch('/Messages/UnreadCount');
+                const data = await res.json();
+                const badge = document.getElementById('notifBadge');
+                if (data.count > 0) {
+                    badge.textContent = data.count > 9 ? '9+' : data.count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch {}
+        }
+
+        checkNotifications();
+        setInterval(checkNotifications, 15000);
     </script>
 
     @RenderSection("Scripts", required: false)
