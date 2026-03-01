@@ -63,6 +63,9 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
                     <i class="fas fa-file-chart-column"></i> Справки
                 </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Messages" ? "active" : "")" href="/Messages">
+                    <i class="fas fa-comments"></i> Съобщения
+                </a>
             }
             else if (User.IsInRole("Teacher"))
             {
@@ -85,6 +88,9 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
                     <i class="fas fa-file-chart-column"></i> Справки
                 </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Messages" ? "active" : "")" href="/Messages">
+                    <i class="fas fa-comments"></i> Съобщения
+                </a>
             }
             else if (User.IsInRole("Student"))
             {
@@ -97,6 +103,9 @@
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "ScheduleSlots" ? "active" : "")" href="/ScheduleSlots">
                     <i class="fas fa-clock"></i> Разписание
+                </a>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Messages" ? "active" : "")" href="/Messages">
+                    <i class="fas fa-comments"></i> Съобщения
                 </a>
             }
         </nav>

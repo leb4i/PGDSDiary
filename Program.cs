@@ -20,6 +20,8 @@ namespace GradingSystem
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddSignalR();
+
 
             // Identity
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -58,6 +60,15 @@ namespace GradingSystem
             app.UseAuthorization();
 
             app.MapControllerRoute(
+                name: "chat",
+                pattern: "Messages/Chat/{userId}",
+                defaults: new { controller = "Messages", action = "Chat" });
+
+            app.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Dashboard}/{action=Index}/{id?}");
+
+            app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Dashboard}/{action=Index}/{id?}");
 
@@ -77,6 +88,8 @@ namespace GradingSystem
                     await DbSeeder.Seed(context, userManager, roleManager);
                 }
             }
+
+            app.MapHub<GradingSystem.Hubs.ChatHub>("/chatHub");
 
             app.Run();
         }

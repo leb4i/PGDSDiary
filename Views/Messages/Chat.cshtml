@@ -1,0 +1,90 @@
+﻿@{
+    ViewData["Title"] = "Чат";
+    var currentUser = ViewBag.CurrentUser;
+    var otherUser = ViewBag.OtherUser;
+}
+
+<div class="page-header">
+    <div style="display:flex;align-items:center;gap:12px;">
+        <a href="/Messages" class="btn btn-outline" style="padding:8px 12px;">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="contact-avatar" style="width:40px;height:40px;font-size:16px;">
+            @otherUser.FirstName?.Substring(0, 1).ToUpper()
+        </div>
+        <div>
+            <h1 style="margin:0;font-size:20px;">@otherUser.FirstName @otherUser.LastName</h1>
+            <p style="margin:0;">@otherUser.UserName</p>
+        </div>
+    </div>
+</div>
+
+<div class="chat-box">
+    <div class="chat-messages" id="chatMessages">
+        @foreach (var m in ViewBag.Messages)
+        {
+            bool isMe = m.SenderId == currentUser.Id;
+            <div class="message-row @(isMe ? "me" : "other")">
+                <div class="message-bubble @(isMe ? "bubble-me" : "bubble-other")">
+                    <div class="message-text">@m.Text</div>
+                    <div class="message-time">@m.SentAt.ToString("HH:mm")</div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="chat-input-bar">
+        <input type="text" id="messageInput" class="form-control" placeholder="Напиши съобщение..."
+               onkeydown="if(event.key==='Enter') sendMessage()" />
+        <button class="btn btn-primary" onclick="sendMessage()">
+            <i class="fas fa-paper-plane"></i>
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.5/signalr.min.js"></script>
+    <script>
+        const currentUserId = "@currentUser.Id";
+        const otherUserId   = "@otherUser.Id";
+
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/chatHub")
+            .withAutomaticReconnect()
+            .build();
+
+        connection.on("ReceiveMessage", (msg) => {
+            appendMessage(msg.senderId, msg.text, msg.sentAt);
+        });
+
+        connection.start().catch(err => console.error(err));
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const text  = input.value.trim();
+            if (!text) return;
+            connection.invoke("SendMessage", otherUserId, text).catch(err => console.error(err));
+            input.value = '';
+        }
+
+        function appendMessage(senderId, text, time) {
+            const isMe = senderId === currentUserId;
+            const div  = document.createElement('div');
+            div.className = `message-row ${isMe ? 'me' : 'other'}`;
+            div.innerHTML = `
+                <div class="message-bubble ${isMe ? 'bubble-me' : 'bubble-other'}">
+                    <div class="message-text">${text}</div>
+                    <div class="message-time">${time}</div>
+                </div>`;
+            document.getElementById('chatMessages').appendChild(div);
+            scrollToBottom();
+        }
+
+        function scrollToBottom() {
+            const el = document.getElementById('chatMessages');
+            el.scrollTop = el.scrollHeight;
+        }
+
+        scrollToBottom();
+    </script>
+}

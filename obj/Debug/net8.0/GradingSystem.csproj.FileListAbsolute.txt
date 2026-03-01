@@ -303,4 +303,8 @@ C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\refint\GradingSystem.
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\GradingSystem.pdb
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\GradingSystem.genruntimeconfig.cache
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\ref\GradingSystem.dll
+C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.Extensions.Diagnostics.Abstractions.dll
+C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.Extensions.Hosting.Abstractions.dll
+C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\Microsoft.Extensions.ObjectPool.dll
+C:\Users\User\Music\asp.net\GradingSystem\bin\Debug\net8.0\System.Net.WebSockets.WebSocketProtocol.dll
 C:\Users\User\Music\asp.net\GradingSystem\obj\Debug\net8.0\staticwebassets.upToDateCheck.txt

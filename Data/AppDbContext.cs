@@ -19,6 +19,8 @@ namespace GradingSystem.Data
         public DbSet<Teacher> Teachers { get; set; } = default!;
         public DbSet<ClassSubject> ClassSubjects { get; set; } = default!;
         public DbSet<Lesson> Lessons { get; set; }
+        public DbSet<Message> Messages { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -131,6 +133,19 @@ namespace GradingSystem.Data
                     .HasForeignKey(ss => ss.SubjectId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            // MESSAGE
+            builder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany()
+                .HasForeignKey(m => m.SenderId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany()
+                .HasForeignKey(m => m.ReceiverId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Индекси за по-бързо зареждане
             builder.Entity<Grade>()
