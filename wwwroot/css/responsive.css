@@ -1,0 +1,127 @@
+﻿@media (max-width: 1024px) {
+    .stat-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    /* SIDEBAR */
+    .sidebar {
+        transform: translateX(-100%);
+        z-index: 200;
+    }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+    .sidebar-overlay.open {
+        display: block;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .main-wrapper {
+        margin-left: 0;
+    }
+
+    .topbar {
+        padding: 0 16px;
+    }
+
+    .page-content {
+        padding: 16px;
+    }
+
+    /* STAT CARDS */
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* TABLES */
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
+    /* SCHEDULE */
+    .schedule-wrapper {
+        overflow-x: auto;
+    }
+
+    /* CHAT */
+    .chat-layout {
+        grid-template-columns: 1fr;
+    }
+
+    /* PAGE HEADER */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    /* SEARCH */
+    .search-wrapper {
+        max-width: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .stat-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .search-wrapper {
+        max-width: 150px;
+    }
+
+    .btn-logout span {
+        display: none;
+    }
+}
+@media (max-width: 768px) {
+    /* РАЗПИСАНИЕ */
+    .schedule-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .schedule-table {
+        min-width: 600px;
+    }
+
+    /* ТОП 10 */
+    .top10-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* DASHBOARD GRID */
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* STAT GRID */
+    .stat-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    .top10-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .stat-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}

@@ -1,0 +1,225 @@
+﻿/* CARDS */
+.card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 22px;
+}
+
+.card-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--text-main);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+/* TABLES */
+.table-wrapper {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+thead {
+    background: #f4f8f5;
+}
+
+    thead th {
+        padding: 11px 16px;
+        text-align: left;
+        font-size: 10.5px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.9px;
+        color: var(--text-muted);
+        border-bottom: 1px solid var(--border);
+    }
+
+tbody td {
+    padding: 11px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+tbody tr:hover {
+    background: #f9fcfa;
+}
+
+/* BUTTONS */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Nunito', sans-serif;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+    .btn-primary:hover {
+        background: var(--accent-dark);
+        color: white;
+    }
+
+.btn-outline {
+    background: transparent;
+    border: 1.5px solid var(--border);
+    color: var(--text-main);
+}
+
+    .btn-outline:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+    }
+
+.btn-danger {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+    .btn-danger:hover {
+        background: var(--danger);
+        color: white;
+    }
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+/* FORMS */
+.form-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+}
+
+.form-control, .form-select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Nunito', sans-serif;
+    color: var(--text-main);
+    background: var(--white);
+    transition: border-color 0.15s;
+    outline: none;
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--accent);
+    }
+
+.form-group {
+    margin-bottom: 16px;
+}
+
+/* BADGES */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+.badge-blue {
+    background: #e0f0ff;
+    color: #1a7ab5;
+}
+
+.badge-red {
+    background: #fee2e2;
+    color: var(--danger);
+}
+
+.badge-green {
+    background: var(--accent-light);
+    color: var(--accent);
+}
+
+.badge-yellow {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+/* GRADES */
+.grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 46px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.grade-6 {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.grade-5 {
+    background: #dbeafe;
+    color: #1d4ed8;
+}
+
+.grade-4 {
+    background: #fef9c3;
+    color: #a16207;
+}
+
+.grade-3 {
+    background: #ffedd5;
+    color: #c2410c;
+}
+
+.grade-2 {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.text-danger {
+    color: var(--danger);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.field-validation-error {
+    color: var(--danger);
+    font-size: 12px;
+}

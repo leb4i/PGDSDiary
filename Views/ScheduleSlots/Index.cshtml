@@ -115,40 +115,125 @@
     </table>
 </div>
 
+<!-- МОБИЛЕН ИЗГЛЕД (1 ден) -->
+<div class="mobile-schedule" style="display:none;">
+    <div class="week-nav" style="justify-content:center;">
+        <button class="btn btn-outline" id="prevDay"><i class="fas fa-chevron-left"></i></button>
+        <span class="week-label" id="dayLabel" style="min-width:160px;text-align:center;"></span>
+        <button class="btn btn-outline" id="nextDay"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <div id="daySlots" style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+    </div>
+</div>
+
 @section Scripts {
-    <script>
-        // Навигация по седмици
-        let offset = 0;
+<script>
+    const days = ["Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък"];
+    const allSlots = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Select(s => new {
+        day = s.DayOfWeek,
+        period = s.PeriodNumber,
+        subject = s.Subject?.Name ?? "",
+        startTime = s.StartTime.ToString("HH:mm"),
+        endTime = s.EndTime.ToString("HH:mm"),
+        className = s.Class?.Name ?? ""
+    })));
 
-        const dayDates = document.querySelectorAll('.day-date');
-        const weekLabel = document.getElementById('weekLabel');
+    // DESKTOP навигация
+    let weekOffset = 0;
+    const dayDates = document.querySelectorAll('.day-date');
+    const weekLabel = document.getElementById('weekLabel');
 
-        function updateDates() {
-            const today = new Date();
-            const diff = today.getDay() === 0 ? 6 : today.getDay() - 1;
-            const monday = new Date(today);
-            monday.setDate(today.getDate() - diff + (offset * 7));
+    function getMonday(offset) {
+        const today = new Date();
+        const diff = today.getDay() === 0 ? 6 : today.getDay() - 1;
+        const monday = new Date(today);
+        monday.setDate(today.getDate() - diff + (offset * 7));
+        return monday;
+    }
 
-            const friday = new Date(monday);
-            friday.setDate(monday.getDate() + 4);
+    function updateDates() {
+        const monday = getMonday(weekOffset);
+        const friday = new Date(monday);
+        friday.setDate(monday.getDate() + 4);
 
-            weekLabel.textContent =
-                monday.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit' }) +
-                ' – ' +
-                friday.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        if (weekLabel) weekLabel.textContent =
+            monday.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit' }) +
+            ' – ' +
+            friday.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
-            dayDates.forEach(el => {
-                const d = parseInt(el.dataset.offset);
-                const date = new Date(monday);
-                date.setDate(monday.getDate() + d);
-                el.textContent = date.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit', year: 'numeric' });
-            });
+        dayDates.forEach(el => {
+            const d = parseInt(el.dataset.offset);
+            const date = new Date(monday);
+            date.setDate(monday.getDate() + d);
+            el.textContent = date.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        });
+    }
+
+    document.getElementById('prevWeek').onclick = () => { weekOffset--; updateDates(); };
+    document.getElementById('nextWeek').onclick = () => { weekOffset++; updateDates(); };
+    document.getElementById('todayBtn').onclick = () => { weekOffset = 0; updateDates(); };
+    updateDates();
+
+    // МОБИЛНА навигация
+    const today = new Date();
+    let currentDayIndex = today.getDay() === 0 || today.getDay() === 6
+        ? 0 : today.getDay() - 1;
+
+    function renderMobileDay() {
+        const dayName = days[currentDayIndex];
+        const monday = getMonday(weekOffset);
+        const date = new Date(monday);
+        date.setDate(monday.getDate() + currentDayIndex);
+
+        document.getElementById('dayLabel').textContent =
+            dayName + ' ' + date.toLocaleDateString('bg-BG', { day: '2-digit', month: '2-digit' });
+
+        const daySlots = allSlots
+            .filter(s => s.day === dayName)
+            .sort((a, b) => a.period - b.period);
+
+        const container = document.getElementById('daySlots');
+        if (daySlots.length === 0) {
+            container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">Няма часове</div>';
+            return;
         }
 
-        document.getElementById('prevWeek').onclick  = () => { offset--; updateDates(); };
-        document.getElementById('nextWeek').onclick  = () => { offset++; updateDates(); };
-        document.getElementById('todayBtn').onclick  = () => { offset = 0; updateDates(); };
+        container.innerHTML = daySlots.map(s => `
+            <div style="background:var(--accent-light);border:1px solid #b7dfc8;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
+                <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);color:white;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                    ${s.period}
+                </div>
+                <div style="flex:1;">
+                    <div style="font-weight:800;font-size:14px;color:var(--text-main);">${s.subject}</div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:3px;">
+                        <i class="fas fa-clock"></i> ${s.startTime} - ${s.endTime}
+                        ${s.className ? `&nbsp;·&nbsp;<i class="fas fa-chalkboard"></i> ${s.className}` : ''}
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
 
-        updateDates();
-    </script>
+    document.getElementById('prevDay').onclick = () => {
+        currentDayIndex = (currentDayIndex - 1 + 5) % 5;
+        renderMobileDay();
+    };
+    document.getElementById('nextDay').onclick = () => {
+        currentDayIndex = (currentDayIndex + 1) % 5;
+        renderMobileDay();
+    };
+
+    // Показвай правилния изглед
+    function checkLayout() {
+        const isMobile = window.innerWidth <= 768;
+        document.querySelector('.schedule-wrapper').style.display = isMobile ? 'none' : '';
+        document.querySelector('.week-nav').style.display = isMobile ? 'none' : '';
+        document.querySelector('.mobile-schedule').style.display = isMobile ? 'block' : 'none';
+        if (isMobile) renderMobileDay();
+    }
+
+    checkLayout();
+    window.addEventListener('resize', checkLayout);
+</script>
 }

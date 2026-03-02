@@ -1,4 +1,11 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<GradingSystem.Models.ApplicationUser> UserManager
+
+@{
+    var topbarUser = await UserManager.GetUserAsync(User);
+}
+
+<!DOCTYPE html>
 <html lang="bg">
 <head>
     <meta charset="utf-8" />
@@ -7,7 +14,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="stylesheet" href="~/css/variables.css" />
+    <link rel="stylesheet" href="~/css/layout.css" />
+    <link rel="stylesheet" href="~/css/components.css" />
+    <link rel="stylesheet" href="~/css/dashboard.css" />
+    <link rel="stylesheet" href="~/css/chat.css" />
+    <link rel="stylesheet" href="~/css/responsive.css" />
+	<link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
 
@@ -61,7 +74,7 @@
                     <i class="fas fa-chart-pie"></i> Статистики
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
-                    <i class="fas fa-file-chart-column"></i> Справки
+                    <i class="fas fa-file-lines"></i> Справки
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Messages" ? "active" : "")" href="/Messages">
                     <i class="fas fa-comments"></i> Съобщения
@@ -86,7 +99,7 @@
                     <i class="fas fa-chart-pie"></i> Статистики
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Reports" ? "active" : "")" href="/Reports">
-                    <i class="fas fa-file-chart-column"></i> Справки
+                    <i class="fas fa-file-lines"></i> Справки
                 </a>
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Messages" ? "active" : "")" href="/Messages">
                     <i class="fas fa-comments"></i> Съобщения
@@ -118,6 +131,9 @@
     <!-- MAIN -->
     <div class="main-wrapper">
         <header class="topbar">
+            <button class="hamburger" onclick="toggleSidebar()">
+                <i class="fas fa-bars"></i>
+            </button>
             <!-- ТЪРСАЧКА -->
             <div class="search-wrapper">
                 <div class="search-box">
@@ -137,9 +153,18 @@
                 </div>
 
                 <div class="topbar-user">
-                    <div class="topbar-avatar">
-                        @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?")
-                    </div>
+                    <a href="/Profile" style="text-decoration:none;">
+                        <div class="topbar-avatar" style="cursor:pointer;overflow:hidden;" title="Моят профил">
+                            @if (topbarUser?.ProfilePicture != null)
+                            {
+                                <img src="@topbarUser.ProfilePicture" style="width:100%;height:100%;border-radius:50%;object-fit:cover;" />
+                            }
+                            else
+                            {
+                                @(User.Identity?.Name?.Substring(0, 1).ToUpper() ?? "?")
+                            }
+                        </div>
+                    </a>
                 </div>
                 <form method="post" action="/Account/Logout">
                     @Html.AntiForgeryToken()
@@ -154,6 +179,8 @@
             @RenderBody()
         </main>
     </div>
+
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
     <script>
         const searchInput = document.getElementById('globalSearch');
@@ -213,7 +240,6 @@
                 dropdown.style.display = 'none';
         });
 
-                // Нотификации
         async function checkNotifications() {
             try {
                 const res = await fetch('/Messages/UnreadCount');
@@ -230,6 +256,11 @@
 
         checkNotifications();
         setInterval(checkNotifications, 15000);
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
     </script>
 
     @RenderSection("Scripts", required: false)
