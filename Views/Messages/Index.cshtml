@@ -13,10 +13,10 @@
     </button>
 </div>
 
-<div style="display:grid;grid-template-columns:300px 1fr;gap:20px;height:calc(100vh - 180px);">
+<div style="display:grid;grid-template-columns:300px 1fr;gap:20px;height:calc(100vh - 180px);" id="chatLayout">
 
     <!-- SIDEBAR -->
-    <div style="background:white;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
+    <div id="chatSidebar" style="background:white;border-radius:12px;border:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;">
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;">
             <i class="fas fa-search" style="color:var(--text-muted);"></i>
             <input type="text" id="contactSearch" placeholder="Търси разговор..."
@@ -62,10 +62,13 @@
             <p style="color:var(--text-muted);font-size:13px;">или започни нов с бутона горе</p>
         </div>
 
-        <!-- CHAT STATE (скрит по подразбиране) -->
+        <!-- CHAT STATE -->
         <div id="chatState" style="display:none;flex-direction:column;height:100%;">
             <!-- Header -->
             <div id="chatHeader" style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
+                <button id="backBtn" onclick="goBack()" style="display:none;background:none;border:none;cursor:pointer;font-size:18px;color:var(--text-muted);padding:4px 8px;">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
                 <div id="chatAvatar" style="width:40px;height:40px;border-radius:50%;background:var(--accent);color:white;font-weight:800;font-size:16px;display:flex;align-items:center;justify-content:center;"></div>
                 <div>
                     <div id="chatName" style="font-weight:700;font-size:15px;"></div>
@@ -88,7 +91,7 @@
 
 <!-- НОВ РАЗГОВОР -->
 <div id="newChatModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9999;align-items:center;justify-content:center;">
-    <div style="background:white;border-radius:12px;width:420px;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
+    <div style="background:white;border-radius:12px;width:420px;max-width:90vw;max-height:80vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,0.2);">
         <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">
             <i class="fas fa-plus" style="color:var(--accent);"></i>
             <span style="font-weight:700;font-size:15px;">Нов разговор</span>
@@ -99,8 +102,7 @@
         </div>
         <div style="padding:12px 16px;border-bottom:1px solid var(--border);">
             <input type="text" id="userSearch" class="form-control" placeholder="Търси потребител..."
-                   oninput="filterUsers(this.value)"
-                   style="width:100%;box-sizing:border-box;" />
+                   oninput="filterUsers(this.value)" style="width:100%;box-sizing:border-box;" />
         </div>
         <div id="userList" style="overflow-y:auto;flex:1;">
             @foreach (var u in ViewBag.AllUsers)
@@ -150,7 +152,6 @@
             document.getElementById('chatAvatar').textContent = userName.charAt(0).toUpperCase();
             document.getElementById('chatName').textContent = userName;
 
-            // Зареди съобщенията
             const res = await fetch(`/Messages/GetMessages?userId=${userId}`);
             const messages = await res.json();
 
@@ -158,6 +159,15 @@
             container.innerHTML = '';
             messages.forEach(m => appendMessage(m.senderId, m.text, m.sentAt));
             scrollToBottom();
+
+            checkChatLayout();
+        }
+
+        function goBack() {
+            activeUserId = null;
+            document.getElementById('chatState').style.display = 'none';
+            document.getElementById('emptyState').style.display = 'flex';
+            checkChatLayout();
         }
 
         function sendMessage() {
@@ -200,5 +210,40 @@
             });
         }
 
+        function checkChatLayout() {
+            const isMobile = window.innerWidth <= 768;
+            const layout = document.getElementById('chatLayout');
+            const sidebar = document.getElementById('chatSidebar');
+            const main = document.getElementById('chatArea');
+            const backBtn = document.getElementById('backBtn');
+
+            if (isMobile) {
+                layout.style.gridTemplateColumns = '1fr';
+                layout.style.height = 'auto';
+
+                if (activeUserId) {
+                    sidebar.style.display = 'none';
+                    main.style.display = 'flex';
+                    main.style.height = '80vh';
+                    if (backBtn) backBtn.style.display = 'block';
+                } else {
+                    sidebar.style.display = 'flex';
+                    sidebar.style.height = '75vh';
+                    main.style.display = 'none';
+                    if (backBtn) backBtn.style.display = 'none';
+                }
+            } else {
+                layout.style.gridTemplateColumns = '300px 1fr';
+                layout.style.height = 'calc(100vh - 180px)';
+                sidebar.style.display = 'flex';
+                sidebar.style.height = '';
+                main.style.display = 'flex';
+                main.style.height = '';
+                if (backBtn) backBtn.style.display = 'none';
+            }
+        }
+
+        window.addEventListener('resize', checkChatLayout);
+        checkChatLayout();
     </script>
 }

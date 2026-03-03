@@ -121,45 +121,4 @@ else
         </div>
 
     </div>
-
-    <!-- РАЗПИСАНИЕ -->
-    <div class="card">
-        <div class="card-title">
-            <i class="fas fa-clock" style="color:var(--accent);"></i>
-            Моето разписание
-        </div>
-        <table>
-            <thead>
-                <tr>
-                    <th>Ден</th>
-                    <th>Час</th>
-                    <th>Предмет</th>
-                    <th>Клас</th>
-                    <th>Начало</th>
-                    <th>Край</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    var dayOrder = new[] { "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък" };
-                    var schedule = ((IEnumerable<dynamic>)ViewBag.Schedule)
-                    .OrderBy(s => Array.IndexOf(dayOrder, (string)s.DayOfWeek))
-                    .ThenBy(s => (int)s.PeriodNumber);
-                }
-                @foreach (var slot in schedule)
-                {
-                    <tr>
-                        <td style="font-weight:700;">@slot.DayOfWeek</td>
-                        <td>
-                            <span class="badge badge-gray">@slot.PeriodNumber час</span>
-                        </td>
-                        <td style="font-weight:600;">@slot.Subject?.Name</td>
-                        <td><span class="badge badge-green">@slot.Class?.Name</span></td>
-                        <td style="color:var(--text-muted);">@slot.StartTime.ToString("HH:mm")</td>
-                        <td style="color:var(--text-muted);">@slot.EndTime.ToString("HH:mm")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
 }

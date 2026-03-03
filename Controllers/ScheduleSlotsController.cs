@@ -119,6 +119,46 @@ namespace GradingSystem.Controllers
             return View(scheduleSlot);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSlots(int? classId)
+        {
+            var query = _context.ScheduleSlots
+                .Include(s => s.Subject)
+                .Include(s => s.Class)
+                .AsQueryable();
+
+            if (classId.HasValue)
+                query = query.Where(s => s.ClassId == classId.Value);
+
+            if (User.IsInRole("Student"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == user!.StudentId);
+                query = query.Where(s => s.ClassId == student!.ClassId);
+            }
+
+            if (User.IsInRole("Teacher"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.UserId == user!.Id);
+                var mySubjectIds = await _context.ClassSubjects
+                    .Where(cs => cs.TeacherId == teacher!.Id)
+                    .Select(cs => cs.SubjectId).Distinct().ToListAsync();
+                query = query.Where(s => mySubjectIds.Contains(s.SubjectId));
+            }
+
+            var slots = await query.Select(s => new {
+                day = s.DayOfWeek,
+                period = s.PeriodNumber,
+                subject = s.Subject!.Name,
+                startTime = s.StartTime.ToString("HH:mm"),
+                endTime = s.EndTime.ToString("HH:mm"),
+                className = s.Class!.Name
+            }).ToListAsync();
+
+            return Json(slots);
+        }
+
         // GET: ScheduleSlots/Create
         public IActionResult Create()
         {

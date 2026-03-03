@@ -14,42 +14,41 @@
             }
             else if (User.IsInRole("Teacher"))
             {
-
                 <text>Отсъствия по твоите предмети</text>
             }
             else
             {
-
                 <text>Всички отсъствия в системата</text>
             }
         </p>
     </div>
-    @if (User.IsInRole("Admin"))
-    {
-        <div class="card" style="margin-bottom:20px;">
-            <div class="card-title">
-                <i class="fas fa-filter" style="color:var(--accent);"></i>
-                Избери клас
-            </div>
-            <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                @foreach (var c in ViewBag.AllClasses)
-                {
-                    <a href="/Attendances?classId=@c.Id"
-                       class="btn @(ViewBag.SelectedClassId == c.Id ? "btn-primary" : "btn-outline") btn-sm">
-                        @c.Name
-                    </a>
-                }
-            </div>
+
+@if (User.IsInRole("Admin"))
+{
+    <div class="card" style="margin-bottom:20px;">
+        <div class="card-title">
+            <i class="fas fa-filter" style="color:var(--accent);"></i>
+            Избери клас
         </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            @foreach (var c in ViewBag.AllClasses)
+            {
+                <a href="/Attendances?classId=@c.Id"
+                   class="btn @(ViewBag.SelectedClassId == c.Id ? "btn-primary" : "btn-outline") btn-sm">
+                    @c.Name
+                </a>
+            }
+        </div>
+    </div>
 
         @if (ViewBag.SelectedClassId == null)
         {
-            <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);">
+            <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);margin-top:20px;">
                 <i class="fas fa-arrow-up" style="font-size:24px;margin-bottom:12px;display:block;"></i>
                 Избери клас за да видиш отсъствията
             </div>
         }
-    }
+}
 </div>
 
 @if (User.IsInRole("Student"))
@@ -159,10 +158,10 @@ else
             <thead>
                 <tr>
                     <th>Ученик</th>
-                    <th>Клас</th>
+                    <th class="hide-mobile">Клас</th>
                     <th>Предмет</th>
                     <th>Статус</th>
-                    <th>Дата</th>
+                    <th class="hide-mobile">Дата</th>
                     @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                     {
                         <th></th>
@@ -174,7 +173,7 @@ else
                 {
                     <tr>
                         <td style="font-weight:600;">@a.Student?.FirstName @a.Student?.LastName</td>
-                        <td><span class="badge badge-green">@a.Student?.Class?.Name</span></td>
+                        <td class="hide-mobile"><span class="badge badge-green">@a.Student?.Class?.Name</span></td>
                         <td style="color:var(--text-muted);">@a.Subject?.Name</td>
                         <td>
                             @{
@@ -183,7 +182,7 @@ else
                             }
                             <span class="badge @sc">@a.Status</span>
                         </td>
-                        <td style="color:var(--text-muted);font-size:12px;">@a.Date.ToString("dd.MM.yyyy")</td>
+                        <td class="hide-mobile" style="color:var(--text-muted);font-size:12px;">@a.Date.ToString("dd.MM.yyyy")</td>
                         @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                         {
                             <td>

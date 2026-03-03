@@ -9,6 +9,39 @@
 }
 
 @media (max-width: 768px) {
+    /* DASHBOARD ТАБЛИЦИ */
+    tbody td {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    thead th {
+        font-size: 10px;
+        padding: 8px 10px;
+    }
+
+    /* ТОП 10 */
+    .top10-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .top10-card {
+        padding: 10px;
+    }
+
+    .top10-name {
+        font-size: 12px;
+    }
+
+    /* OVERFLOW FIX */
+    .card {
+        overflow: hidden;
+    }
+
+    .table-wrapper {
+        overflow-x: auto;
+    }
+
     /* SIDEBAR */
     .sidebar {
         transform: translateX(-100%);
@@ -39,7 +72,17 @@
         padding: 16px;
     }
 
-    /* STAT CARDS */
+    /* LAYOUT */
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
     .stat-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -49,9 +92,9 @@
         overflow-x: auto;
     }
 
-    /* SCHEDULE */
-    .schedule-wrapper {
-        overflow-x: auto;
+    /* TOP 10 */
+    .top10-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 
     /* CHAT */
@@ -59,21 +102,60 @@
         grid-template-columns: 1fr;
     }
 
-    /* PAGE HEADER */
-    .page-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
-    }
-
     /* SEARCH */
     .search-wrapper {
         max-width: 200px;
+    }
+
+    /* CHAT */
+    .chat-layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+
+    #chatArea {
+        height: 60vh;
+    }
+
+    /* ПРОФИЛ */
+    #profileGrid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* ОЦЕНКИ ТАБЛИЦА */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    tbody td, thead th {
+        font-size: 12px;
+        padding: 8px 6px;
+    }
+
+    .hide-mobile {
+        display: none;
+    }
+
+    /* ОТСЪСТВИЯ */
+    .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* TEACHER DASHBOARD ТАБЛИЦА */
+    .table-wrapper td, .table-wrapper th {
+        white-space: normal;
+        word-break: break-word;
     }
 }
 
 @media (max-width: 480px) {
     .stat-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .top10-grid {
         grid-template-columns: 1fr 1fr;
     }
 
@@ -87,41 +169,5 @@
 
     .btn-logout span {
         display: none;
-    }
-}
-@media (max-width: 768px) {
-    /* РАЗПИСАНИЕ */
-    .schedule-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    .schedule-table {
-        min-width: 600px;
-    }
-
-    /* ТОП 10 */
-    .top10-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    /* DASHBOARD GRID */
-    .dashboard-grid {
-        grid-template-columns: 1fr;
-    }
-
-    /* STAT GRID */
-    .stat-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (max-width: 480px) {
-    .top10-grid {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .stat-grid {
-        grid-template-columns: 1fr 1fr;
     }
 }

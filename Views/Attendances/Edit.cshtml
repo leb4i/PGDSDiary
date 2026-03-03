@@ -1,49 +1,44 @@
 ﻿@model GradingSystem.Models.Attendance
-
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактирай присъствие";
 }
-
-<h1>Edit</h1>
-
-<h4>Attendance</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="StudentId" class="control-label"></label>
-                <select asp-for="StudentId" class="form-control" asp-items="ViewBag.StudentId"></select>
-                <span asp-validation-for="StudentId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="SubjectId" class="control-label"></label>
-                <select asp-for="SubjectId" class="form-control" asp-items="ViewBag.SubjectId"></select>
-                <span asp-validation-for="SubjectId" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Date" class="control-label"></label>
-                <input asp-for="Date" class="form-control" />
-                <span asp-validation-for="Date" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Status" class="control-label"></label>
-                <input asp-for="Status" class="form-control" />
-                <span asp-validation-for="Status" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+<div class="page-header">
+    <div>
+        <h1>Редактирай присъствие</h1>
     </div>
+    <a asp-action="Index" class="btn btn-outline">
+        <i class="fas fa-arrow-left"></i> Назад
+    </a>
 </div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
+<div class="card" style="max-width: 560px;">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+        <div class="form-group">
+            <label class="form-label">Ученик</label>
+            <select asp-for="StudentId" class="form-select" asp-items="ViewBag.StudentId">
+                <option value="">-- Избери ученик --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Предмет</label>
+            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId">
+                <option value="">-- Избери предмет --</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Дата</label>
+            <input asp-for="Date" class="form-control" type="date" />
+        </div>
+        <div class="form-group">
+            <label class="form-label">Статус</label>
+            <select asp-for="Status" class="form-select">
+                <option value="Присъства">Присъства</option>
+                <option value="Отсъства">Отсъства</option>
+                <option value="Закъснение">Закъснение</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Запази
+        </button>
+    </form>
 </div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}

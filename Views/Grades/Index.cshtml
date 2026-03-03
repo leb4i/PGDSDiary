@@ -238,13 +238,13 @@ else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
             <thead>
                 <tr>
                     <th>Ученик</th>
-                    <th>Клас</th>
+                    <th class="hide-mobile">Клас</th>
                     <th>Предмет</th>
-                    <th>Срок</th>
+                    <th class="hide-mobile">Срок</th>
                     <th>Оценка</th>
-                    <th>Вид</th>
-                    <th>Дата</th>
-                    <th>Прогнозна</th>
+                    <th class="hide-mobile">Вид</th>
+                    <th class="hide-mobile">Дата</th>
+                    <th class="hide-mobile">Прогнозна</th>
                     @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                     {
                         <th></th>
@@ -260,25 +260,23 @@ else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
                     .Select(x => (double)x.Value).ToList();
                     double pred = validVals.OrderBy(v => Math.Abs(v - studentGrades.Average())).First();
                     string predCls = pred >= 5.5 ? "grade-6" : pred >= 4.5 ? "grade-5" : pred >= 3.5 ? "grade-4" : pred >= 3.0 ? "grade-3" : "grade-2";
+                    string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
 
                     <tr>
                         <td style="font-weight:600;">@g.Student?.FirstName @g.Student?.LastName</td>
-                        <td><span class="badge badge-green">@g.Student?.Class?.Name</span></td>
+                        <td class="hide-mobile"><span class="badge badge-green">@g.Student?.Class?.Name</span></td>
                         <td style="color:var(--text-muted);">@g.Subject?.Name</td>
-                        <td>
+                        <td class="hide-mobile">
                             <span class="badge @(isS1 ? "badge-blue" : "badge-green")">
                                 @(isS1 ? "I срок" : "II срок")
                             </span>
                         </td>
                         <td>
-                            @{
-                                string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
-                            }
                             <span class="grade-badge @bc">@g.Value.ToString("F2")</span>
                         </td>
-                        <td><span class="badge badge-gray">@g.Type</span></td>
-                        <td style="color:var(--text-muted);font-size:12px;">@g.GradedAt.ToString("dd.MM.yyyy")</td>
-                        <td><span class="grade-badge @predCls">@pred.ToString("F2")</span></td>
+                        <td class="hide-mobile"><span class="badge badge-gray">@g.Type</span></td>
+                        <td class="hide-mobile" style="color:var(--text-muted);font-size:12px;">@g.GradedAt.ToString("dd.MM.yyyy")</td>
+                        <td class="hide-mobile"><span class="grade-badge @predCls">@pred.ToString("F2")</span></td>
                         @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
                         {
                             <td>
