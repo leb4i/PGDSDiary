@@ -38,25 +38,61 @@
                 </div>
             }
 
-            <form method="post" action="/Account/Login">
+            <form method="post" action="/Account/Login" id="loginForm" novalidate>
                 <label class="form-label">Потребителско име</label>
                 <div class="input-wrap">
                     <i class="fas fa-user"></i>
-                    <input type="text" name="username" class="form-control"
+                    <input type="text" name="username" id="username" class="form-control"
                            placeholder="Въведи потребителско име" />
+                </div>
+                <div id="usernameError" style="color:#e53e3e;font-size:12px;margin-top:-8px;margin-bottom:8px;display:none;">
+                    <i class="fas fa-circle-exclamation"></i> Въведи потребителско име
                 </div>
 
                 <label class="form-label">Парола</label>
                 <div class="input-wrap">
                     <i class="fas fa-lock"></i>
-                    <input type="password" name="password" class="form-control"
+                    <input type="password" name="password" id="password" class="form-control"
                            placeholder="Въведи парола" />
+                </div>
+                <div id="passwordError" style="color:#e53e3e;font-size:12px;margin-top:-8px;margin-bottom:8px;display:none;">
+                    <i class="fas fa-circle-exclamation"></i> Въведи парола
                 </div>
 
                 <button type="submit" class="btn-login">
                     <i class="fas fa-right-to-bracket"></i> Вход в системата
                 </button>
             </form>
+
+            <script>
+                document.getElementById('loginForm').addEventListener('submit', function(e) {
+                    let valid = true;
+                    const username = document.getElementById('username');
+                    const password = document.getElementById('password');
+                    const usernameError = document.getElementById('usernameError');
+                    const passwordError = document.getElementById('passwordError');
+
+                    if (!username.value.trim()) {
+                        usernameError.style.display = 'block';
+                        username.style.borderColor = '#e53e3e';
+                        valid = false;
+                    } else {
+                        usernameError.style.display = 'none';
+                        username.style.borderColor = '';
+                    }
+
+                    if (!password.value.trim()) {
+                        passwordError.style.display = 'block';
+                        password.style.borderColor = '#e53e3e';
+                        valid = false;
+                    } else {
+                        passwordError.style.display = 'none';
+                        password.style.borderColor = '';
+                    }
+
+                    if (!valid) e.preventDefault();
+                });
+            </script>
         </div>
     </div>
 </body>

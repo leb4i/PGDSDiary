@@ -19,9 +19,12 @@
         <h1>Разписание</h1>
         <p>Седмична програма по класове</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Добави час
-    </a>
+    @if (!User.IsInRole("Student"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Добави час
+        </a>
+    }
 </div>
 
 @if (!User.IsInRole("Student"))
@@ -49,6 +52,15 @@
     </form>
 </div>
 }
+
+      @if (User.IsInRole("Admin") && ViewBag.SelectedClass == null)
+      {
+        <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);">
+            <i class="fas fa-arrow-up" style="font-size:24px;margin-bottom:12px;display:block;"></i>
+            Избери клас за да видиш разписанието
+        </div>
+      }
+
 <!-- Навигация седмица -->
 <div class="week-nav">
     <button class="btn btn-outline" id="prevWeek">
@@ -185,13 +197,23 @@
                 .filter(s => s.day === dayName)
                 .sort((a, b) => a.period - b.period);
 
+            // Уникални по период — взимаме първия за всеки период
+            const uniqueSlots = [];
+            const seenPeriods = new Set();
+            daySlots.forEach(s => {
+                if (!seenPeriods.has(s.period)) {
+                    seenPeriods.add(s.period);
+                    uniqueSlots.push(s);
+                }
+            });
+
             const container = document.getElementById('daySlots');
-            if (daySlots.length === 0) {
+            if (uniqueSlots.length === 0) {
                 container.innerHTML = '<div style="text-align:center;padding:32px;color:var(--text-muted);">Няма часове</div>';
                 return;
             }
 
-            container.innerHTML = daySlots.map(s => `
+            container.innerHTML = uniqueSlots.map(s => `
                 <div style="background:var(--accent-light);border:1px solid #b7dfc8;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:14px;">
                     <div style="width:32px;height:32px;border-radius:8px;background:var(--accent);color:white;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
                         ${s.period}
@@ -209,12 +231,17 @@
 
         function checkLayout() {
             const isMobile = document.documentElement.clientWidth <= 930;
-            document.querySelector('.schedule-wrapper').style.setProperty('display', isMobile ? 'none' : '', 'important');
+            const hasClass = new URLSearchParams(window.location.search).get('classId');
+            const isAdmin = @(User.IsInRole("Admin") ? "true" : "false");
+
+            const showContent = !isAdmin || hasClass;
+
+            document.querySelector('.schedule-wrapper').style.setProperty('display', isMobile || !showContent ? 'none' : '', 'important');
             document.querySelectorAll('.week-nav').forEach(el =>
-                el.style.setProperty('display', isMobile ? 'none' : 'flex', 'important')
+                el.style.setProperty('display', isMobile || !showContent ? 'none' : 'flex', 'important')
             );
-            document.querySelector('.mobile-schedule').style.setProperty('display', isMobile ? 'block' : 'none', 'important');
-            if (isMobile) renderMobileDay();
+            document.querySelector('.mobile-schedule').style.setProperty('display', isMobile && showContent ? 'block' : 'none', 'important');
+            if (isMobile && showContent) renderMobileDay();
         }
 
         document.getElementById('prevWeek').onclick = () => { weekOffset--; updateDates(); };

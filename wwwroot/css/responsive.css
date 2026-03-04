@@ -8,7 +8,19 @@
     }
 }
 
+@media (min-width: 769px) {
+    .hide-desktop {
+        display: none;
+    }
+}
+
 @media (max-width: 768px) {
+    /* ADMIN GRADES */
+    .table-wrapper table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
     /* SIDEBAR */
     .sidebar {
         transform: translateX(-100%);

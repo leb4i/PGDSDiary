@@ -333,9 +333,12 @@ else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
                     string bc = g.Value >= 6 ? "grade-6" : g.Value >= 5 ? "grade-5" : g.Value >= 4 ? "grade-4" : g.Value >= 3 ? "grade-3" : "grade-2";
 
                     <tr>
-                        <td style="font-weight:600;">@g.Student?.FirstName @g.Student?.LastName</td>
+                        <td style="font-weight:600;">
+                            @g.Student?.FirstName @g.Student?.LastName
+                        <div class="hide-desktop" style="font-size:11px;color:var(--text-muted);margin-top:2px;">@g.Subject?.Name</div>
+                        </td>
                         <td class="hide-mobile"><span class="badge badge-green">@g.Student?.Class?.Name</span></td>
-                        <td style="color:var(--text-muted);">@g.Subject?.Name</td>
+                        <td class="hide-mobile" style="color:var(--text-muted);">@g.Subject?.Name</td>
                         <td class="hide-mobile">
                             <span class="badge @(isS1 ? "badge-blue" : "badge-green")">
                                 @(isS1 ? "I срок" : "II срок")

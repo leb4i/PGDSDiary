@@ -72,29 +72,33 @@ namespace GradingSystem.Controllers
                 if (classId.HasValue)
                     slots = slots.Where(s => s.ClassId == classId.Value).ToList();
 
-                ViewBag.Classes = await _context.Classes
+                ViewBag.Classes = _context.Classes
                     .Where(c => myClassIds.Contains(c.Id))
-                    .OrderBy(c => c.Name).ToListAsync();
+                    .AsEnumerable()
+                    .OrderBy(c => int.Parse(c.Name.Substring(0, c.Name.Length - 1)))
+                    .ThenBy(c => c.Name.Last())
+                    .ToList();
                 ViewBag.SelectedClass = classId;
 
                 return View(slots);
             }
 
             // Admin
-            var query = _context.ScheduleSlots
+            ViewBag.Classes = _context.Classes
+                .AsEnumerable()
+                .OrderBy(c => int.Parse(c.Name.Substring(0, c.Name.Length - 1)))
+                .ThenBy(c => c.Name.Last())
+                .ToList();
+            ViewBag.SelectedClass = classId;
+
+            if (!classId.HasValue)
+                return View(new List<ScheduleSlot>());
+
+            var allSlots = await _context.ScheduleSlots
                 .Include(s => s.Class)
                 .Include(s => s.Subject)
-                .AsQueryable();
-
-            if (classId.HasValue)
-                query = query.Where(s => s.ClassId == classId.Value);
-
-            var allSlots = await query.ToListAsync();
-
-            ViewBag.Classes = await _context.Classes
-                .OrderBy(c => c.Name)
+                .Where(s => s.ClassId == classId.Value)
                 .ToListAsync();
-            ViewBag.SelectedClass = classId;
 
             return View(allSlots);
         }
@@ -141,10 +145,29 @@ namespace GradingSystem.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.UserId == user!.Id);
-                var mySubjectIds = await _context.ClassSubjects
+
+                var myClassSubjects = await _context.ClassSubjects
                     .Where(cs => cs.TeacherId == teacher!.Id)
-                    .Select(cs => cs.SubjectId).Distinct().ToListAsync();
-                query = query.Where(s => mySubjectIds.Contains(s.SubjectId));
+                    .Select(cs => new { cs.SubjectId, cs.ClassId })
+                    .ToListAsync();
+
+                var teacherSlots = await _context.ScheduleSlots
+                    .Include(s => s.Subject)
+                    .Include(s => s.Class)
+                    .ToListAsync();
+
+                var filteredSlots = teacherSlots.Where(s => myClassSubjects
+                    .Any(cs => cs.SubjectId == s.SubjectId && cs.ClassId == s.ClassId))
+                    .ToList();
+
+                return Json(filteredSlots.Select(s => new {
+                    day = s.DayOfWeek,
+                    period = s.PeriodNumber,
+                    subject = s.Subject!.Name,
+                    startTime = s.StartTime.ToString("HH:mm"),
+                    endTime = s.EndTime.ToString("HH:mm"),
+                    className = s.Class!.Name
+                }));
             }
 
             var slots = await query.Select(s => new {

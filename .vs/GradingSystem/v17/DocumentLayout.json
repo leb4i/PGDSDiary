@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Migrations\\20260304150725_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Migrations\\20260304150725_InitialCreate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\pgdsdiary\\controllers\\scheduleslotscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\scheduleslotscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\pgdsdiary\\views\\attendances\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\attendances\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\pgdsdiary\\views\\grades\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\grades\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\pgdsdiary\\wwwroot\\css\\responsive.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:wwwroot\\css\\responsive.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\music\\asp.net\\pgdsdiary\\views\\scheduleslots\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\scheduleslots\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -51,40 +51,41 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "20260304150725_InitialCreate.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Migrations\\20260304150725_InitialCreate.cs",
-              "RelativeDocumentMoniker": "Migrations\\20260304150725_InitialCreate.cs",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Migrations\\20260304150725_InitialCreate.cs",
-              "RelativeToolTip": "Migrations\\20260304150725_InitialCreate.cs",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Title": "ScheduleSlotsController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Controllers\\ScheduleSlotsController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ScheduleSlotsController.cs",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Controllers\\ScheduleSlotsController.cs",
+              "RelativeToolTip": "Controllers\\ScheduleSlotsController.cs",
+              "ViewState": "AgIAAEQAAAAAAAAAAAAAAE8AAAAeAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-04T15:07:25.871Z",
+              "WhenOpened": "2026-03-04T18:21:56.015Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
               "Title": "Index.cshtml",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Views\\Attendances\\Index.cshtml",
-              "RelativeDocumentMoniker": "Views\\Attendances\\Index.cshtml",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Views\\Attendances\\Index.cshtml",
-              "RelativeToolTip": "Views\\Attendances\\Index.cshtml",
-              "ViewState": "AgIAAA8AAAAAAAAAAAAuwDQAAAABAAAAAAAAAA==",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Views\\Grades\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Grades\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Views\\Grades\\Index.cshtml",
+              "RelativeToolTip": "Views\\Grades\\Index.cshtml",
+              "ViewState": "AgIAALMBAAAAAAAAAAAuwNgBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-04T14:32:33.409Z",
+              "WhenOpened": "2026-03-04T18:21:31.023Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "responsive.css",
-              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\wwwroot\\css\\responsive.css",
-              "RelativeDocumentMoniker": "wwwroot\\css\\responsive.css",
-              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\wwwroot\\css\\responsive.css",
-              "RelativeToolTip": "wwwroot\\css\\responsive.css",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2026-03-04T13:50:32.766Z"
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Views\\ScheduleSlots\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\ScheduleSlots\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Music\\asp.net\\PGDSDiary\\Views\\ScheduleSlots\\Index.cshtml",
+              "RelativeToolTip": "Views\\ScheduleSlots\\Index.cshtml",
+              "ViewState": "AgIAANwAAAAAAAAAAAAAAAABAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-04T18:18:36.668Z",
+              "EditorCaption": ""
             }
           ]
         },

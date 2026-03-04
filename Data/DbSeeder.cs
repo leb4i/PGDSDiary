@@ -412,6 +412,11 @@ namespace GradingSystem.Data
             context.ClassSubjects.AddRange(classSubjects);
             context.SaveChanges();
 
+            if (context.ScheduleSlots.Any())
+            {
+                context.ScheduleSlots.RemoveRange(context.ScheduleSlots);
+                context.SaveChanges();
+            }
             // --- РАЗПИСАНИЕ ---
             var days = new[] { "Понеделник", "Вторник", "Сряда", "Четвъртък", "Петък" };
             var times = new (TimeOnly Start, TimeOnly End)[]
@@ -425,31 +430,27 @@ namespace GradingSystem.Data
                 (new TimeOnly(12, 55), new TimeOnly(13, 40)),
             };
 
+            // Следим заетостта на учители и класове: (dayIndex, periodIndex)
             var teacherUsed = teachers.ToDictionary(t => t.Id, _ => new HashSet<(int, int)>());
             var classUsed = classes.ToDictionary(c => c.Id, _ => new HashSet<(int, int)>());
             var scheduleSlots = new List<ScheduleSlot>();
 
-            // Колко пъти седмично да се повтаря всеки предмет
-            int totalSlots = 5 * 7; // 35 слота на седмица на клас
-            int subjectsCount(int classId) => classSubjects.Count(cs => cs.ClassId == classId);
-
             foreach (var c in classes)
             {
                 var csForClass = classSubjects.Where(cs => cs.ClassId == c.Id).ToList();
-                int sCount = csForClass.Count;
-                if (sCount == 0) continue;
+                if (csForClass.Count == 0) continue;
 
-                int repeats = Math.Max(4, totalSlots / sCount);
+                int totalSlots = 5 * 7; // 35 слота на седмица
+                int repeats = Math.Max(4, totalSlots / csForClass.Count);
+
                 var allSlots = new List<(int subjectId, int teacherId)>();
-
                 foreach (var cs in csForClass)
                     for (int r = 0; r < repeats; r++)
-                        allSlots.Add((cs.SubjectId, cs.TeacherId.Value));
+                        allSlots.Add((cs.SubjectId, cs.TeacherId!.Value));
 
-                // Ограничаваме до точно 35 слота
                 allSlots = allSlots.Take(totalSlots).OrderBy(_ => Guid.NewGuid()).ToList();
 
-                var rngSchedule = new Random(c.Id); // фиксиран seed по клас
+                var rngSchedule = new Random(c.Id);
                 var allDayPeriods = (
                     from d in Enumerable.Range(0, 5)
                     from p in Enumerable.Range(0, 7)
@@ -460,7 +461,33 @@ namespace GradingSystem.Data
                 foreach (var (d, p) in allDayPeriods)
                 {
                     if (slotIndex >= allSlots.Count) break;
-                    var (subjectId, _) = allSlots[slotIndex++];
+
+                    var (subjectId, teacherId) = allSlots[slotIndex];
+
+                    // Пропускаме ако учителят или класът е зает
+                    if (teacherUsed[teacherId].Contains((d, p)) || classUsed[c.Id].Contains((d, p)))
+                    {
+                        // Търсим друг предмет чийто учител е свободен
+                        bool found = false;
+                        for (int i = slotIndex; i < allSlots.Count; i++)
+                        {
+                            var (sid, tid) = allSlots[i];
+                            if (!teacherUsed[tid].Contains((d, p)) && !classUsed[c.Id].Contains((d, p)))
+                            {
+                                allSlots[i] = allSlots[slotIndex];
+                                allSlots[slotIndex] = (sid, tid);
+                                subjectId = sid;
+                                teacherId = tid;
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) { slotIndex++; continue; }
+                    }
+
+                    teacherUsed[teacherId].Add((d, p));
+                    classUsed[c.Id].Add((d, p));
+
                     scheduleSlots.Add(new ScheduleSlot
                     {
                         ClassId = c.Id,
@@ -470,8 +497,11 @@ namespace GradingSystem.Data
                         StartTime = times[p].Start,
                         EndTime = times[p].End
                     });
+
+                    slotIndex++;
                 }
             }
+
             context.ScheduleSlots.AddRange(scheduleSlots);
             context.SaveChanges();
 
