@@ -40,71 +40,70 @@
             Ученици — @students.Count
         </div>
 
-        <table>
-            <thead>
-                <tr>
-                    <th>Ученик</th>
-                    <th style="text-align:center;">Присъства</th>
-                    <th style="text-align:center;color:#b45309;">Закъснял</th>
-                    <th style="text-align:center;color:#b91c1c;">Отсъства</th>
-                    <th>Оценка</th>
-                    <th>Вид</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var s in students)
-                {
-                    <tr id="row-@s.Id">
-                        <td style="font-weight:600;">@s.FirstName @s.LastName</td>
-
-                        <td style="text-align:center;">
-                            <label class="status-btn status-present">
-                                <input type="radio" name="status_@s.Id" value="present"
-                                       checked onchange="setStatus(@s.Id, 'present')" hidden />
-                                <i class="fas fa-check"></i>
-                            </label>
-                        </td>
-                        <td style="text-align:center;">
-                            <label class="status-btn status-late">
-                                <input type="radio" name="status_@s.Id" value="late"
-                                       onchange="setStatus(@s.Id, 'late')" hidden />
-                                <i class="fas fa-clock"></i>
-                            </label>
-                        </td>
-                        <td style="text-align:center;">
-                            <label class="status-btn status-absent">
-                                <input type="radio" name="status_@s.Id" value="absent"
-                                       onchange="setStatus(@s.Id, 'absent')" hidden />
-                                <i class="fas fa-xmark"></i>
-                            </label>
-                        </td>
-
-                        <td>
-                            <select name="grades[@s.Id]" class="grade-dropdown" onchange="colorGrade(this)">
-                                <option value="0" class="grade-opt-none">—</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="3.5">3.50</option>
-                                <option value="4">4</option>
-                                <option value="4.5">4.50</option>
-                                <option value="5">5</option>
-                                <option value="5.5">5.50</option>
-                                <option value="6">6</option>
-                            </select>
-                        </td>
-
-                        <td>
-                            <select name="gradeTypes[@s.Id]" class="form-select" style="width:120px;">
-                                <option>Устен</option>
-                                <option>Тест</option>
-                                <option>Контролно</option>
-                                <option>Домашна работа</option>
-                            </select>
-                        </td>
+        <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+            <table style="min-width:320px;width:100%;">
+                <thead>
+                    <tr>
+                        <th>Ученик</th>
+                        <th id="th-present" style="text-align:center;">Присъства</th>
+                        <th id="th-late" style="text-align:center;color:#b45309;">Закъснял</th>
+                        <th id="th-absent" style="text-align:center;color:#b91c1c;">Отсъства</th>
+                        <th id="th-grade" style="text-align:center;">Оц.</th>
+                        <th class="hide-mobile">Вид</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var s in students)
+                    {
+                        <tr id="row-@s.Id">
+                            <td style="font-weight:600;font-size:13px;">@s.FirstName @s.LastName</td>
+                            <td style="text-align:center;">
+                                <label class="status-btn status-present">
+                                    <input type="radio" name="status_@s.Id" value="present"
+                                           checked onchange="setStatus(@s.Id, 'present')" hidden />
+                                    <i class="fas fa-check"></i>
+                                </label>
+                            </td>
+                            <td style="text-align:center;">
+                                <label class="status-btn status-late">
+                                    <input type="radio" name="status_@s.Id" value="late"
+                                           onchange="setStatus(@s.Id, 'late')" hidden />
+                                    <i class="fas fa-clock"></i>
+                                </label>
+                            </td>
+                            <td style="text-align:center;">
+                                <label class="status-btn status-absent">
+                                    <input type="radio" name="status_@s.Id" value="absent"
+                                           onchange="setStatus(@s.Id, 'absent')" hidden />
+                                    <i class="fas fa-xmark"></i>
+                                </label>
+                            </td>
+                            <td style="text-align:center;">
+                                <select name="grades[@s.Id]" class="grade-dropdown" onchange="colorGrade(this)" style="width:70px;">
+                                    <option value="0">—</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="3.5">3.5</option>
+                                    <option value="4">4</option>
+                                    <option value="4.5">4.5</option>
+                                    <option value="5">5</option>
+                                    <option value="5.5">5.5</option>
+                                    <option value="6">6</option>
+                                </select>
+                            </td>
+                            <td class="hide-mobile">
+                                <select name="gradeTypes[@s.Id]" class="form-select" style="width:120px;">
+                                    <option>Устен</option>
+                                    <option>Тест</option>
+                                    <option>Контролно</option>
+                                    <option>Домашна работа</option>
+                                </select>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 
         <!-- Скрити полета за absent/late -->
         <div id="hiddenFields"></div>
@@ -159,5 +158,16 @@
                 }
             }
         }
+
+        function checkLessonLayout() {
+            const isMobile = document.documentElement.clientWidth <= 930;
+            document.getElementById('th-present').textContent = isMobile ? '✓' : 'Присъства';
+            document.getElementById('th-late').textContent = isMobile ? '⏰' : 'Закъснял';
+            document.getElementById('th-absent').textContent = isMobile ? '✗' : 'Отсъства';
+            document.getElementById('th-grade').textContent = isMobile ? 'Оц.' : 'Оценка';
+        }
+        checkLessonLayout();
+        window.addEventListener('resize', checkLessonLayout);
+
     </script>
 }

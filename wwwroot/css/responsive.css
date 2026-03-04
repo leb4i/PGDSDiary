@@ -9,45 +9,11 @@
 }
 
 @media (max-width: 768px) {
-    /* DASHBOARD ТАБЛИЦИ */
-    tbody td {
-        font-size: 12px;
-        padding: 8px 10px;
-    }
-
-    thead th {
-        font-size: 10px;
-        padding: 8px 10px;
-    }
-
-    /* ТОП 10 */
-    .top10-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-    }
-
-    .top10-card {
-        padding: 10px;
-    }
-
-    .top10-name {
-        font-size: 12px;
-    }
-
-    /* OVERFLOW FIX */
-    .card {
-        overflow: hidden;
-    }
-
-    .table-wrapper {
-        overflow-x: auto;
-    }
-
     /* SIDEBAR */
     .sidebar {
         transform: translateX(-100%);
         z-index: 200;
     }
-
         .sidebar.open {
             transform: translateX(0);
         }
@@ -90,21 +56,35 @@
     /* TABLES */
     .table-wrapper {
         overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+        .table-wrapper td, .table-wrapper th {
+            white-space: normal;
+            word-break: break-word;
+        }
+
+    tbody td, thead th {
+        font-size: 12px;
+        padding: 8px 6px;
+    }
+
+    /* HIDE ON MOBILE */
+    .hide-mobile {
+        display: none !important;
     }
 
     /* TOP 10 */
     .top10-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, 1fr) !important;
     }
 
-    /* CHAT */
-    .chat-layout {
-        grid-template-columns: 1fr;
+    .top10-card {
+        padding: 10px;
     }
 
-    /* SEARCH */
-    .search-wrapper {
-        max-width: 200px;
+    .top10-name {
+        font-size: 12px;
     }
 
     /* CHAT */
@@ -122,31 +102,20 @@
         grid-template-columns: 1fr !important;
     }
 
-    /* ОЦЕНКИ ТАБЛИЦА */
-    .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
+    /* SEARCH */
+    .search-wrapper {
+        max-width: 200px;
     }
 
-    tbody td, thead th {
-        font-size: 12px;
-        padding: 8px 6px;
+    /* SEMESTER FILTER - само на мобилен */
+    .semester-filter {
+        display: flex !important;
     }
+}
 
-    .hide-mobile {
-        display: none;
-    }
-
-    /* ОТСЪСТВИЯ */
-    .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-    }
-
-    /* TEACHER DASHBOARD ТАБЛИЦА */
-    .table-wrapper td, .table-wrapper th {
-        white-space: normal;
-        word-break: break-word;
+@media (min-width: 769px) {
+    .semester-filter {
+        display: none !important;
     }
 }
 

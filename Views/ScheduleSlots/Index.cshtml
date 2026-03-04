@@ -208,7 +208,7 @@
         }
 
         function checkLayout() {
-            const isMobile = window.innerWidth <= 768;
+            const isMobile = document.documentElement.clientWidth <= 930;
             document.querySelector('.schedule-wrapper').style.setProperty('display', isMobile ? 'none' : '', 'important');
             document.querySelectorAll('.week-nav').forEach(el =>
                 el.style.setProperty('display', isMobile ? 'none' : 'flex', 'important')

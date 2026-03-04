@@ -3,6 +3,7 @@ wwwroot\css\components.css
 wwwroot\css\dashboard.css
 wwwroot\css\layout.css
 wwwroot\css\login.css
+wwwroot\css\responsive.css
 wwwroot\css\site.css
 wwwroot\css\variables.css
 wwwroot\favicon.ico
@@ -67,4 +68,3 @@ wwwroot\lib\jquery\dist\jquery.min.map
 wwwroot\lib\jquery\LICENSE.txt
 wwwroot\uploads\profiles\92eb46a8-4705-431c-b24f-35d6f7022b1f.jpg
 wwwroot\uploads\profiles\92eb46a8-4705-431c-b24f-35d6f7022b1f.png
-wwwroot\css\responsive.css

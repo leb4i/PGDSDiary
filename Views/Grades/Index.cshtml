@@ -13,6 +13,8 @@
         double avg = vals.Average();
         return validVals.OrderBy(v => Math.Abs(v - avg)).First();
     }
+
+    string GradeClass(double v) => v >= 5.5 ? "grade-6" : v >= 4.5 ? "grade-5" : v >= 3.5 ? "grade-4" : v >= 3.0 ? "grade-3" : "grade-2";
 }
 
 <div class="page-header">
@@ -25,12 +27,10 @@
             }
             else if (User.IsInRole("Teacher"))
             {
-
                 <text>Оценки по твоите предмети</text>
             }
             else
             {
-
                 <text>Всички оценки в системата</text>
             }
         </p>
@@ -101,118 +101,188 @@
     var grouped = Model.GroupBy(g => g.Subject?.Name).OrderBy(g => g.Key);
     int rowNum = 1;
 
-    <div class="table-wrapper" style="overflow-x:auto;">
-        <table style="min-width:900px;">
-            <thead>
-                <tr>
-                    <th rowspan="2" style="width:36px;border-right:1px solid var(--border);">№</th>
-                    <th rowspan="2" style="border-right:1px solid var(--border);">Предмет</th>
-                    <th colspan="2" style="text-align:center;background:#f0f4ff;border-right:1px solid var(--border);">Първи срок</th>
-                    <th colspan="2" style="text-align:center;background:#f0fff4;border-right:1px solid var(--border);">Втори срок</th>
-                    <th rowspan="2" style="text-align:center;background:#fefce8;">Годишна</th>
-                </tr>
-                <tr>
-                    <th style="background:#f0f4ff;font-size:10px;">Текущи</th>
-                    <th style="background:#f0f4ff;font-size:10px;border-right:1px solid var(--border);">Срочна</th>
-                    <th style="background:#f0fff4;font-size:10px;">Текущи</th>
-                    <th style="background:#f0fff4;font-size:10px;border-right:1px solid var(--border);">Срочна</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var group in grouped)
-                {
-                    var s1 = group.Where(g => IsFirstSemester(g.GradedAt)).ToList();
-                    var s2 = group.Where(g => IsSecondSemester(g.GradedAt)).ToList();
+    <!-- МОБИЛЕН ИЗГЛЕД -->
+    <div id="mobileGrades" style="display:none;">
+        <div style="display:flex;gap:8px;margin-bottom:16px;">
+            <button onclick="filterSem(0)" id="sem0" class="btn btn-primary btn-sm">Всички</button>
+            <button onclick="filterSem(1)" id="sem1" class="btn btn-outline btn-sm">Първи срок</button>
+            <button onclick="filterSem(2)" id="sem2" class="btn btn-outline btn-sm">Втори срок</button>
+        </div>
+        @foreach (var group in grouped)
+        {
+            var s1 = group.Where(g => IsFirstSemester(g.GradedAt)).ToList();
+            var s2 = group.Where(g => IsSecondSemester(g.GradedAt)).ToList();
+            double? pred1 = CalcPredicted(s1.Select(g => (double)g.Value));
+            double? pred2 = CalcPredicted(s2.Select(g => (double)g.Value));
 
-                    double? pred1 = CalcPredicted(s1.Select(g => (double)g.Value));
-                    double? pred2 = CalcPredicted(s2.Select(g => (double)g.Value));
+            double? annual = null;
+            if (pred1.HasValue && pred2.HasValue)
+                annual = validVals.OrderBy(v => Math.Abs(v - (pred1.Value + pred2.Value) / 2.0)).First();
+            else if (pred1.HasValue) annual = pred1;
+            else if (pred2.HasValue) annual = pred2;
 
-                    double? annual = null;
-                    if (pred1.HasValue && pred2.HasValue)
-                        annual = validVals.OrderBy(v => Math.Abs(v - (pred1.Value + pred2.Value) / 2.0)).First();
-                    else if (pred1.HasValue) annual = pred1;
-                    else if (pred2.HasValue) annual = pred2;
+            <div class="card" style="margin-bottom:10px;padding:14px 16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+                    <div style="font-weight:800;font-size:14px;">@group.Key</div>
+                    @if (annual.HasValue)
+                    {
+                        <span class="grade-badge @GradeClass(annual.Value)" style="font-size:14px;">@annual.Value.ToString("F2")</span>
+                    }
+                </div>
+                <div class="sem-block" data-sem="1" style="margin-bottom:8px;">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">ПЪРВИ СРОК</div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+                        @foreach (var g in s1.OrderBy(g => g.GradedAt))
+                        {
+                            <span class="grade-badge @GradeClass((double)g.Value) grade-clickable"
+                                  onclick="showGradePopup(this)"
+                                  data-value="@g.Value.ToString("F2")"
+                                  data-type="@g.Type"
+                                  data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
+                                  data-subject="@group.Key">
+                                @g.Value.ToString("F0")
+                            </span>
+                        }
+                        @if (pred1.HasValue)
+                        {
+                            <span style="font-size:11px;color:var(--text-muted);margin-left:4px;">→ <strong>@pred1.Value.ToString("F2")</strong></span>
+                        }
+                        @if (!s1.Any())
+                        {
+                            <span style="color:var(--text-muted);font-size:12px;">—</span>
+                        }
+                    </div>
+                </div>
+                <div class="sem-block" data-sem="2">
+                    <div style="font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:4px;">ВТОРИ СРОК</div>
+                    <div style="display:flex;gap:4px;flex-wrap:wrap;align-items:center;">
+                        @foreach (var g in s2.OrderBy(g => g.GradedAt))
+                        {
+                            <span class="grade-badge @GradeClass((double)g.Value) grade-clickable"
+                                  onclick="showGradePopup(this)"
+                                  data-value="@g.Value.ToString("F2")"
+                                  data-type="@g.Type"
+                                  data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
+                                  data-subject="@group.Key">
+                                @g.Value.ToString("F0")
+                            </span>
+                        }
+                        @if (pred2.HasValue)
+                        {
+                            <span style="font-size:11px;color:var(--text-muted);margin-left:4px;">→ <strong>@pred2.Value.ToString("F2")</strong></span>
+                        }
+                        @if (!s2.Any())
+                        {
+                            <span style="color:var(--text-muted);font-size:12px;">—</span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 
-                    string GradeClass(double v) => v >= 5.5 ? "grade-6" : v >= 4.5 ? "grade-5" : v >= 3.5 ? "grade-4" : v >= 3.0 ? "grade-3" : "grade-2";
-
+    <!-- ДЕСКТОП ИЗГЛЕД -->
+    <div id="desktopGrades">
+        <div class="table-wrapper" style="overflow-x:auto;">
+            <table style="min-width:900px;">
+                <thead>
                     <tr>
-                        <td style="color:var(--text-muted);font-weight:700;border-right:1px solid var(--border);">@rowNum</td>
-                        <td style="font-weight:700;border-right:1px solid var(--border);">
-                            <i class="fas fa-book-open" style="color:var(--text-muted);margin-right:8px;font-size:12px;"></i>
-                            @group.Key
-                        </td>
-
-                        @* ПЪРВИ СРОК — текущи *@
-                        <td style="background:#fafbff;">
-                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                                @foreach (var g in s1.OrderBy(g => g.GradedAt))
-                                {
-                                    string bc = GradeClass((double)g.Value);
-                                    <span class="grade-badge @bc grade-clickable"
-                                          onclick="showGradePopup(this)"
-                                          data-value="@g.Value.ToString("F2")"
-                                          data-type="@g.Type"
-                                          data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
-                                          data-subject="@group.Key">
-                                        @g.Value.ToString("F0")
-                                    </span>
-                                }
-                            </div>
-                        </td>
-
-                        @* ПЪРВИ СРОК — срочна *@
-                        <td style="background:#fafbff;border-right:1px solid var(--border);">
-                            @if (pred1.HasValue)
-                            {
-                                <span class="grade-badge @GradeClass(pred1.Value)">@pred1.Value.ToString("F2")</span>
-                            }
-                        </td>
-
-                        @* ВТОРИ СРОК — текущи *@
-                        <td style="background:#f6fff9;">
-                            <div style="display:flex;gap:4px;flex-wrap:wrap;">
-                                @foreach (var g in s2.OrderBy(g => g.GradedAt))
-                                {
-                                    string bc = GradeClass((double)g.Value);
-                                    <span class="grade-badge @bc grade-clickable"
-                                          onclick="showGradePopup(this)"
-                                          data-value="@g.Value.ToString("F2")"
-                                          data-type="@g.Type"
-                                          data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
-                                          data-subject="@group.Key">
-                                        @g.Value.ToString("F0")
-                                    </span>
-                                }
-                            </div>
-                        </td>
-
-                        @* ВТОРИ СРОК — срочна *@
-                        <td style="background:#f6fff9;border-right:1px solid var(--border);">
-                            @if (pred2.HasValue)
-                            {
-                                <span class="grade-badge @GradeClass(pred2.Value)">@pred2.Value.ToString("F2")</span>
-                            }
-                        </td>
-
-                        @* ГОДИШНА *@
-                        <td style="background:#fefce8;text-align:center;">
-                            @if (annual.HasValue)
-                            {
-                                <span class="grade-badge @GradeClass(annual.Value)" style="font-size:14px;">@annual.Value.ToString("F2")</span>
-                            }
-                        </td>
+                        <th rowspan="2" style="width:36px;border-right:1px solid var(--border);">№</th>
+                        <th rowspan="2" style="border-right:1px solid var(--border);">Предмет</th>
+                        <th colspan="2" style="text-align:center;background:#f0f4ff;border-right:1px solid var(--border);">Първи срок</th>
+                        <th colspan="2" style="text-align:center;background:#f0fff4;border-right:1px solid var(--border);">Втори срок</th>
+                        <th rowspan="2" style="text-align:center;background:#fefce8;">Годишна</th>
                     </tr>
-                    rowNum++;
-                }
-            </tbody>
-        </table>
+                    <tr>
+                        <th style="background:#f0f4ff;font-size:10px;">Текущи</th>
+                        <th style="background:#f0f4ff;font-size:10px;border-right:1px solid var(--border);">Срочна</th>
+                        <th style="background:#f0fff4;font-size:10px;">Текущи</th>
+                        <th style="background:#f0fff4;font-size:10px;border-right:1px solid var(--border);">Срочна</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var group in grouped)
+                    {
+                        var s1 = group.Where(g => IsFirstSemester(g.GradedAt)).ToList();
+                        var s2 = group.Where(g => IsSecondSemester(g.GradedAt)).ToList();
+
+                        double? pred1 = CalcPredicted(s1.Select(g => (double)g.Value));
+                        double? pred2 = CalcPredicted(s2.Select(g => (double)g.Value));
+
+                        double? annual = null;
+                        if (pred1.HasValue && pred2.HasValue)
+                            annual = validVals.OrderBy(v => Math.Abs(v - (pred1.Value + pred2.Value) / 2.0)).First();
+                        else if (pred1.HasValue) annual = pred1;
+                        else if (pred2.HasValue) annual = pred2;
+
+                        <tr>
+                            <td style="color:var(--text-muted);font-weight:700;border-right:1px solid var(--border);">@rowNum</td>
+                            <td style="font-weight:700;border-right:1px solid var(--border);">
+                                <i class="fas fa-book-open" style="color:var(--text-muted);margin-right:8px;font-size:12px;"></i>
+                                @group.Key
+                            </td>
+                            <td style="background:#fafbff;">
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    @foreach (var g in s1.OrderBy(g => g.GradedAt))
+                                    {
+                                        string bc = GradeClass((double)g.Value);
+                                        <span class="grade-badge @bc grade-clickable"
+                                              onclick="showGradePopup(this)"
+                                              data-value="@g.Value.ToString("F2")"
+                                              data-type="@g.Type"
+                                              data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
+                                              data-subject="@group.Key">
+                                            @g.Value.ToString("F0")
+                                        </span>
+                                    }
+                                </div>
+                            </td>
+                            <td style="background:#fafbff;border-right:1px solid var(--border);">
+                                @if (pred1.HasValue)
+                                {
+                                    <span class="grade-badge @GradeClass(pred1.Value)">@pred1.Value.ToString("F2")</span>
+                                }
+                            </td>
+                            <td style="background:#f6fff9;">
+                                <div style="display:flex;gap:4px;flex-wrap:wrap;">
+                                    @foreach (var g in s2.OrderBy(g => g.GradedAt))
+                                    {
+                                        string bc = GradeClass((double)g.Value);
+                                        <span class="grade-badge @bc grade-clickable"
+                                              onclick="showGradePopup(this)"
+                                              data-value="@g.Value.ToString("F2")"
+                                              data-type="@g.Type"
+                                              data-date="@g.GradedAt.ToString("dd.MM.yyyy")"
+                                              data-subject="@group.Key">
+                                            @g.Value.ToString("F0")
+                                        </span>
+                                    }
+                                </div>
+                            </td>
+                            <td style="background:#f6fff9;border-right:1px solid var(--border);">
+                                @if (pred2.HasValue)
+                                {
+                                    <span class="grade-badge @GradeClass(pred2.Value)">@pred2.Value.ToString("F2")</span>
+                                }
+                            </td>
+                            <td style="background:#fefce8;text-align:center;">
+                                @if (annual.HasValue)
+                                {
+                                    <span class="grade-badge @GradeClass(annual.Value)" style="font-size:14px;">@annual.Value.ToString("F2")</span>
+                                }
+                            </td>
+                        </tr>
+                        rowNum++;
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 }
 
 @* ADMIN / TEACHER ИЗГЛЕД *@
 else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
 {
-    @* Филтър срок *@
     var semFilter = Context.Request.Query["sem"].ToString();
     var filtered = Model.AsEnumerable();
     if (semFilter == "1") filtered = filtered.Where(g => IsFirstSemester(g.GradedAt));
@@ -344,17 +414,27 @@ else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
             document.getElementById('popupSubject').textContent = el.dataset.subject;
             document.getElementById('popupBy').textContent      = el.dataset.by ? 'Въведена от: ' + el.dataset.by : '';
 
-            const rect   = el.getBoundingClientRect();
-            const popupW = 220;
-            let left = rect.right + window.scrollX + 10;
-            let top  = rect.top   + window.scrollY - 10;
+            if (window.innerWidth <= 768) {
+                // На мобилен — центриран
+                popup.style.position = 'fixed';
+                popup.style.top  = '50%';
+                popup.style.left = '50%';
+                popup.style.transform = 'translate(-50%, -50%)';
+            } else {
+                // На десктоп — до елемента
+                popup.style.position = 'absolute';
+                popup.style.transform = '';
+                const rect   = el.getBoundingClientRect();
+                const popupW = 220;
+                let left = rect.right + window.scrollX + 10;
+                let top  = rect.top   + window.scrollY - 10;
+                if (left + popupW > window.innerWidth - 20)
+                    left = rect.left + window.scrollX - popupW - 10;
+                popup.style.top  = top + 'px';
+                popup.style.left = left + 'px';
+            }
 
-            if (left + popupW > window.innerWidth - 20)
-                left = rect.left + window.scrollX - popupW - 10;
-
-            popup.style.top     = top + 'px';
-            popup.style.left    = left + 'px';
-            popup.style.display = 'block';
+            popup.style.display   = 'block';
             overlay.style.display = 'block';
         }
 
@@ -362,5 +442,28 @@ else if (ViewBag.SelectedClassId != null || User.IsInRole("Teacher"))
             document.getElementById('gradePopup').style.display  = 'none';
             document.getElementById('gradeOverlay').style.display = 'none';
         }
+
+        function filterSem(sem) {
+            document.querySelectorAll('.sem-block').forEach(b => {
+                b.style.display = (sem === 0 || b.dataset.sem == sem) ? 'block' : 'none';
+            });
+            [0,1,2].forEach(i => {
+                const btn = document.getElementById('sem'+i);
+                if (btn) btn.className = 'btn btn-sm ' + (i === sem ? 'btn-primary' : 'btn-outline');
+            });
+        }
+
+        function checkGradesLayout() {
+            const isMobile = document.documentElement.clientWidth <= 930;
+            const mobile = document.getElementById('mobileGrades');
+            const desktop = document.getElementById('desktopGrades');
+            if (mobile) mobile.style.display = isMobile ? 'block' : 'none';
+            if (desktop) desktop.style.display = isMobile ? 'none' : 'block';
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            checkGradesLayout();
+        });
+        window.addEventListener('resize', checkGradesLayout);
     </script>
 }
