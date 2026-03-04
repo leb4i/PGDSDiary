@@ -22,6 +22,7 @@
             }
         </p>
     </div>
+</div>
 
 @if (User.IsInRole("Admin"))
 {
@@ -30,6 +31,7 @@
             <i class="fas fa-filter" style="color:var(--accent);"></i>
             Избери клас
         </div>
+
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
             @foreach (var c in ViewBag.AllClasses)
             {
@@ -41,15 +43,14 @@
         </div>
     </div>
 
-        @if (ViewBag.SelectedClassId == null)
-        {
-            <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);margin-top:20px;">
-                <i class="fas fa-arrow-up" style="font-size:24px;margin-bottom:12px;display:block;"></i>
-                Избери клас за да видиш отсъствията
-            </div>
-        }
+    @if (ViewBag.SelectedClassId == null)
+    {
+        <div class="card" style="text-align:center;padding:48px;color:var(--text-muted);margin-top:20px;">
+            <i class="fas fa-arrow-up" style="font-size:24px;margin-bottom:12px;display:block;"></i>
+            Избери клас за да видиш отсъствията
+        </div>
+    }
 }
-</div>
 
 @if (User.IsInRole("Student"))
 {
