@@ -35,12 +35,16 @@
     </div>
 
     <div style="display:flex;gap:10px;border-top:1px solid var(--border);padding-top:16px;">
+    @if (User.IsInRole("Admin"))
+    {
+        
         <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
             <i class="fas fa-pen"></i> Редактирай
         </a>
         <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn btn-danger">
             <i class="fas fa-trash"></i> Изтрий
         </a>
+    }
         <a asp-action="Index" class="btn btn-outline">Назад</a>
     </div>
 </div>

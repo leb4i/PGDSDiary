@@ -120,6 +120,10 @@
                 <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Messages" ? "active" : "")" href="/Messages">
                     <i class="fas fa-comments"></i> Съобщения
                 </a>
+                <div class="sidebar-section">Анализи</div>
+                <a class="nav-link @(ViewContext.RouteData.Values["controller"]?.ToString() == "Statistics" ? "active" : "")" href="/Statistics">
+                    <i class="fas fa-chart-pie"></i> Статистики
+                </a>
             }
         </nav>
 

@@ -7,12 +7,24 @@
       "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\views\\subjects\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\subjects\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\shared\\_layout.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\controllers\\subjectscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\subjectscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\views\\classes\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\classes\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\controllers\\classescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\classescontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\controllers\\teacherscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:controllers\\teacherscontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|c:\\users\\user\\desktop\\pgdsdiary\\views\\teachers\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{FDE7DC5C-16EC-4D22-AB10-B1B44DC6D3AF}|GradingSystem.csproj|solutionrelative:views\\teachers\\details.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
   "DocumentGroupContainers": [
@@ -22,7 +34,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 7,
           "Children": [
             {
               "$type": "Bookmark",
@@ -35,28 +47,63 @@
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "Details.cshtml",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Subjects\\Details.cshtml",
-              "RelativeDocumentMoniker": "Views\\Subjects\\Details.cshtml",
-              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Subjects\\Details.cshtml",
-              "RelativeToolTip": "Views\\Subjects\\Details.cshtml",
-              "ViewState": "AQIAABgAAAAAAAAAAAAwwCwAAAAGAAAA",
+              "Title": "_Layout.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Shared\\_Layout.cshtml",
+              "RelativeDocumentMoniker": "Views\\Shared\\_Layout.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Shared\\_Layout.cshtml",
+              "RelativeToolTip": "Views\\Shared\\_Layout.cshtml",
+              "ViewState": "AQIAAG8AAAAAAAAAAAAAAH0AAAAUAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-05T10:11:45.372Z",
+              "WhenOpened": "2026-03-05T10:43:12.371Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "SubjectsController.cs",
-              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Controllers\\SubjectsController.cs",
-              "RelativeDocumentMoniker": "Controllers\\SubjectsController.cs",
-              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Controllers\\SubjectsController.cs",
-              "RelativeToolTip": "Controllers\\SubjectsController.cs",
-              "ViewState": "AQIAAIAAAAAAAAAAAAAswJEAAAAkAAAA",
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Classes\\Index.cshtml",
+              "RelativeDocumentMoniker": "Views\\Classes\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Classes\\Index.cshtml",
+              "RelativeToolTip": "Views\\Classes\\Index.cshtml",
+              "ViewState": "AQIAACUAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-05T10:43:00.954Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ClassesController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Controllers\\ClassesController.cs",
+              "RelativeDocumentMoniker": "Controllers\\ClassesController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Controllers\\ClassesController.cs",
+              "RelativeToolTip": "Controllers\\ClassesController.cs",
+              "ViewState": "AQIAADoAAAAAAAAAAAAqwGoAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-05T10:02:21.269Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-05T10:38:20.679Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "TeachersController.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Controllers\\TeachersController.cs",
+              "RelativeDocumentMoniker": "Controllers\\TeachersController.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Controllers\\TeachersController.cs",
+              "RelativeToolTip": "Controllers\\TeachersController.cs",
+              "ViewState": "AQIAAI8AAAAAAAAAAAAqwKQAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-05T10:37:54.167Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Details.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Teachers\\Details.cshtml",
+              "RelativeDocumentMoniker": "Views\\Teachers\\Details.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\Views\\Teachers\\Details.cshtml",
+              "RelativeToolTip": "Views\\Teachers\\Details.cshtml",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-05T10:35:25.287Z"
             },
             {
               "$type": "Document",
@@ -66,7 +113,7 @@
               "RelativeDocumentMoniker": "appsettings.json",
               "ToolTip": "C:\\Users\\User\\Desktop\\PGDSDiary\\appsettings.json",
               "RelativeToolTip": "appsettings.json",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAsAAAABAAAA",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAkAAAAcAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
               "WhenOpened": "2026-03-05T10:00:21.507Z",
               "EditorCaption": ""
