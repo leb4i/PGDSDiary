@@ -8,9 +8,12 @@
         <h1>Предмети</h1>
         <p>Всички предмети в системата</p>
     </div>
-    <a asp-action="Create" class="btn btn-primary">
-        <i class="fas fa-plus"></i> Нов предмет
-    </a>
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Нов предмет
+        </a>
+    }
 </div>
 
 <div class="table-wrapper">
@@ -29,6 +32,8 @@
                     <td style="font-weight:600;">@item.Name</td>
                     <td><span class="badge badge-blue">@item.ShortName</span></td>
                     <td>
+                    @if (User.IsInRole("Admin"))
+                    {
                         <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline btn-sm">
                             <i class="fas fa-pen"></i>
                         </a>
@@ -38,6 +43,7 @@
                         <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">
                             <i class="fas fa-trash"></i>
                         </a>
+                        }
                     </td>
                 </tr>
             }
